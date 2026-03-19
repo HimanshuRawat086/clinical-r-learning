@@ -1,40 +1,48 @@
 # clinical-r-learning
 Clinical R programming projects for analysis, reporting (RTF), and data visualization aligned with clinical trial workflows.
 
-# Clinical R Learning
+# Clinical R Learning – Basic End-to-End Workflow
 
 ## Overview
 
-This repository contains Clinical R programming projects focused on:
+This project demonstrates a simple end-to-end R workflow aligned with SAS-style programming:
 
-* Data manipulation (tidyverse)
-* Reporting (RTF generation using r2rtf)
-* Clinical-style tables (table1)
-* Data visualization (ggplot2)
+* Data creation
+* Data manipulation
+* Filtering
+* Reporting (RTF output)
+* Visualization
 
-## Folder Structure
+## Structure
 
-* scripts/ → R programs
-* data/ → input datasets
-* output/ → generated reports (RTF, plots)
+Single script with step-wise execution (similar to SAS DATA step flow)
+
+## Steps Covered
+
+1. Variable creation
+2. Vector operations
+3. Data frame creation
+4. Filtering and subsetting
+5. Adding new variables
+6. Data manipulation using dplyr
+7. Summary table generation
+8. RTF report creation
+9. Data visualization
+
+## Output
+
+* RTF Report → output/new_report.rtf
+* Plot → Histogram of age
 
 ## Tools Used
 
 * R
 * dplyr
-* ggplot2
 * table1
 * r2rtf
+* ggplot2
 
-## Projects
+## Purpose
 
-### 1. Basic R Programming and Reporting
+To build a strong foundation in R programming using a structured, SAS-like approach suitable for clinical data workflows.
 
-* Data frame creation
-* Filtering and selection
-* RTF report generation
-* Histogram visualization
-
-## Goal
-
-To build a strong portfolio of clinical R projects aligned with pharmaceutical industry workflows.
