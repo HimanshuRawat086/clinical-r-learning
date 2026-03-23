@@ -106,3 +106,35 @@ This script demonstrates fundamental R operations including:
 ## Purpose
 
 To build foundational R skills for data handling, environment management, and visualization.
+
+# Clinical R – String Handling and SAS Data Import
+
+## Overview
+
+This script demonstrates:
+
+* String manipulation
+* Package installation and loading
+* Importing SAS datasets into R
+* Creating a sample clinical dataset
+* Exploring R environment and help system
+
+## Steps Covered
+
+1. Create and manipulate string variables
+2. Convert text to upper and lower case
+3. Check object class
+4. Install and load haven package
+5. Read SAS dataset using read_sas()
+6. Create sample ADSL dataset
+7. Explore loaded libraries using search()
+8. Access R help documentation
+
+## Output
+
+* Character operations results
+* ADSL dataset (adsl_df)
+
+## Purpose
+
+To simulate clinical data import workflows in R similar to SAS and understand basic string operations.
