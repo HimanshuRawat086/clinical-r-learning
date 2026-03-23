@@ -46,3 +46,32 @@ Single script with step-wise execution (similar to SAS DATA step flow)
 
 To build a strong foundation in R programming using a structured, SAS-like approach suitable for clinical data workflows.
 
+# Clinical R – Using admiral Test Data
+
+## Overview
+
+This script demonstrates how to use example clinical datasets in R using the **admiral.test** package.
+
+## Packages Used
+
+* formatters
+* admiral.test
+
+## Steps Covered
+
+1. Install required packages
+2. Load libraries
+3. Load example datasets:
+
+   * ADSL dataset (ex_adsl)
+   * DM dataset (admiral_dm)
+
+## Output
+
+* adsl → Subject-level dataset
+* dm → Demographics dataset
+
+## Purpose
+
+To understand how clinical datasets can be accessed and used in R for analysis similar to SAS SDTM/ADaM workflows.
+
