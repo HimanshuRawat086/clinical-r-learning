@@ -75,3 +75,34 @@ This script demonstrates how to use example clinical datasets in R using the **a
 
 To understand how clinical datasets can be accessed and used in R for analysis similar to SAS SDTM/ADaM workflows.
 
+# Basic R Data Handling and File Operations
+
+## Overview
+
+This script demonstrates fundamental R operations including:
+
+* Vector creation
+* Data frame creation
+* Object handling
+* Working directory management
+* Basic plotting
+
+## Steps Covered
+
+1. Create character and numeric vectors
+2. Access vector elements
+3. Create data frame
+4. Access rows, columns, and variables
+5. List and remove objects from environment
+6. Check and set working directory
+7. Verify file existence
+8. Generate scatter plot
+
+## Output
+
+* Data frame: student
+* Plot: Age vs Height
+
+## Purpose
+
+To build foundational R skills for data handling, environment management, and visualization.
