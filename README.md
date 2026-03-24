@@ -138,3 +138,37 @@ This script demonstrates:
 ## Purpose
 
 To simulate clinical data import workflows in R similar to SAS and understand basic string operations.
+
+# Clinical R – Environment, Functions, and Data Structures
+
+## Overview
+
+This script demonstrates core R programming concepts including:
+
+* Environment management
+* Working directory handling
+* Vector operations
+* Function creation and scope
+* Data types and type checking
+* Data frame structure
+
+## Steps Covered
+
+1. Clear environment and set working directory
+2. Create character and numeric vectors
+3. Check vector structure and type
+4. Define custom functions and understand scope (local vs global)
+5. Perform arithmetic operations
+6. Explore different data types in R
+7. Create sequences and vectors
+8. Initialize empty vectors
+9. Create and explore data frame structure
+
+## Output
+
+* Console outputs
+* Data frame: d
+
+## Purpose
+
+To build a strong foundation in R programming concepts required for clinical data analysis and scripting.
