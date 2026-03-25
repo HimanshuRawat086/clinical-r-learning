@@ -172,3 +172,44 @@ This script demonstrates core R programming concepts including:
 ## Purpose
 
 To build a strong foundation in R programming concepts required for clinical data analysis and scripting.
+
+# Clinical R – Data Types, Conversion, and Structures
+
+## Overview
+
+This script demonstrates core R concepts related to:
+
+* Type coercion
+* Data type conversion
+* Lists and matrices
+* Handling missing values
+* Data frame operations
+* Attach and detach usage
+
+## Steps Covered
+
+1. Create mixed-type vectors and observe coercion
+2. Perform arithmetic on logical vectors
+3. Create lists and access elements
+4. Convert data types using:
+
+   * as.numeric()
+   * as.character()
+   * as.logical()
+   * as.complex()
+5. Handle missing values using is.na() and sum()
+6. Combine data using cbind() and rbind()
+7. Create and manipulate matrices
+8. Work with lists and indexing
+9. Use Hmisc package for imputation
+10. Create data frame and access variables
+11. Use attach() and detach()
+
+## Output
+
+* Various objects (vectors, lists, matrix, data frame)
+* Console outputs
+
+## Purpose
+
+To build strong understanding of R data structures and type handling, essential for clinical data processing and analysis.
