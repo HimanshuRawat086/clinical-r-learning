@@ -213,3 +213,34 @@ This script demonstrates core R concepts related to:
 ## Purpose
 
 To build strong understanding of R data structures and type handling, essential for clinical data processing and analysis.
+
+# Clinical R – Data Manipulation using dplyr
+
+## Overview
+
+This script demonstrates clinical-style data manipulation using the **dplyr** package.
+
+## Steps Covered
+
+1. Create sample clinical dataset
+2. Explore structure using str() and print()
+3. Select columns using select()
+4. Filter rows based on conditions
+5. Chain operations using pipe (%>%)
+6. Create new variables using mutate()
+7. Sort data using arrange()
+8. Group and summarise data
+9. Apply functions across variables using across()
+10. Remove duplicates using distinct()
+11. Perform row-wise calculations
+12. Bind datasets using rbind()
+
+## Output
+
+* Filtered datasets
+* Aggregated summaries
+* Modified data frames
+
+## Purpose
+
+To simulate real-world clinical data manipulation workflows similar to SAS using dplyr.
