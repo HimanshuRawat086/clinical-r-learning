@@ -1,0 +1,84 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+
+#--------------------------------------------------
+# Step 2: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+list.files()
+
+#--------------------------------------------------
+# Step 3: Read TXT File (No Header)
+#--------------------------------------------------
+aa <- read.table(file="Dummy_txt.txt", sep="", header=FALSE)
+aa
+str(aa)
+
+#--------------------------------------------------
+# Step 4: Read TXT File (With Header)
+#--------------------------------------------------
+aa1 <- read.table("Dummy_txt.txt", sep="", header=TRUE)
+
+#--------------------------------------------------
+# Step 5: Read CSV using read.table
+#--------------------------------------------------
+aa1 <- read.table("Dummy_csv.txt", sep=",")
+aa1
+
+aa2 <- read.table("Dummy_csv.txt")
+aa2
+
+#--------------------------------------------------
+# Step 6: Read CSV using read.csv
+#--------------------------------------------------
+emp <- read.csv(file="employee_data_exported_01.csv")
+emp
+str(emp)
+
+#--------------------------------------------------
+# Step 7: Read Excel File
+#--------------------------------------------------
+library(readxl)
+getwd()
+list.files()
+
+pop <- read_excel("Population.xlsx")
+pop
+
+#--------------------------------------------------
+# Step 8: Read CSV using readr
+#--------------------------------------------------
+library(haven)
+library(readr)
+
+emp <- read_csv("employee_data_exported_01.csv")
+emp
+str(emp)
+
+read_csv("employee_data_exported_01.csv", col_types = "ncncc")
+
+#--------------------------------------------------
+# Step 9: Data Access and Manipulation
+#--------------------------------------------------
+emp[,2]
+emp[1,2]
+
+names(emp)
+colnames(emp)
+
+emp$salary
+emp$salary + 10
+emp$age * 2
+
+emp
+print(emp)
+
+#--------------------------------------------------
+# Step 10: Basic Output
+#--------------------------------------------------
+num <- 4
+print(paste0("Number :", num))
