@@ -244,3 +244,22 @@ This script demonstrates clinical-style data manipulation using the **dplyr** pa
 ## Purpose
 
 To simulate real-world clinical data manipulation workflows similar to SAS using dplyr.
+
+Overview
+
+Program demonstrates importing data from TXT, CSV, and Excel files and performing basic data handling in R.
+
+Input Datasets
+Text files (Dummy_txt.txt, Dummy_csv.txt)
+CSV file (employee_data_exported_01.csv)
+Excel file (Population.xlsx)
+Key Derivations
+Reading files using read.table, read.csv, read_csv, read_excel
+Checking structure using str()
+Column access using $, indexing
+Basic transformations (salary + 10, age * 2)
+Output Dataset
+emp (final working dataset)
+Purpose
+
+To demonstrate data import, structure validation, and basic manipulation in R.
