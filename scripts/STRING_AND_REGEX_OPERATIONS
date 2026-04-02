@@ -1,0 +1,68 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+
+#--------------------------------------------------
+# Step 2: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+list.files()
+
+#--------------------------------------------------
+# Step 3: Basic Operation
+#--------------------------------------------------
+3^4
+
+#--------------------------------------------------
+# Step 4: Pattern Matching
+#--------------------------------------------------
+text <- c("cat","Dog","Camel","Beer","elephant","Programming","bce")
+
+grep("[aeiou]", text, value=TRUE)
+grep("^[aeiou]", text, value=TRUE)
+grep("[aeiou]$", text, value=TRUE)
+grep("[^aeiou]", text, value=TRUE)
+grep("[aeiou]{2}", text, value=TRUE)
+
+#--------------------------------------------------
+# Step 5: Print vs Cat
+#--------------------------------------------------
+x <- c("Hello","World")
+print(x)
+cat(x)
+
+b <- "Hello\nWorld"
+print(b)
+cat(b)
+
+c <- "Hello\tworld"
+cat(c)
+
+#--------------------------------------------------
+# Step 6: Read Text File
+#--------------------------------------------------
+df <- readLines("Homicides.txt")
+
+#--------------------------------------------------
+# Step 7: Pattern Search in File
+#--------------------------------------------------
+g <- grep("Cause: shooting", df)
+length(g)
+
+grep("[cC]ause: [Ss]hooting", df)
+
+#--------------------------------------------------
+# Step 8: Logical Matching
+#--------------------------------------------------
+g <- grepl("^New", state.name)
+g
+sum(g)
+state.name[g]
+
+#--------------------------------------------------
+# Step 9: Substitution
+#--------------------------------------------------
+sub("SAS", "R", "SAS Programming")
+gsub("SAS", "R", "SAS SAS Programming")
