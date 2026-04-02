@@ -1,0 +1,93 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+list.files()
+
+#--------------------------------------------------
+# Step 3: Read Excel File
+#--------------------------------------------------
+library(readxl)
+dt <- read_excel("Dates_exercise.xlsx")
+View(dt)
+str(dt)
+
+#--------------------------------------------------
+# Step 4: Convert to Date
+#--------------------------------------------------
+first_col <- as.Date(dt$month_day_year, format="%m/%d/%y")
+
+class(first_col)
+typeof(first_col)
+
+class(dt$month_day_year)
+typeof(first_col)
+class(dt$month_day_year)
+
+#--------------------------------------------------
+# Step 5: Date Formatting
+#--------------------------------------------------
+format(first_col, "%d%b%Y")
+toupper(format(first_col, "%d%b%Y"))
+
+as.numeric(first_col)
+
+#--------------------------------------------------
+# Step 6: Date Difference
+#--------------------------------------------------
+dt1 <- as.Date("1970-01-03")
+dt2 <- as.Date("1970-01-05")
+
+dt2 - dt1
+as.numeric(dt2 - dt1)
+
+#--------------------------------------------------
+# Step 7: Date Components
+#--------------------------------------------------
+weekdays(first_col)
+months(first_col)
+
+#--------------------------------------------------
+# Step 8: System Date/Time
+#--------------------------------------------------
+Sys.Date()
+date()
+Sys.time()
+
+#--------------------------------------------------
+# Step 9: Age Calculation
+#--------------------------------------------------
+brth_date <- as.Date("1970-01-01")
+today <- Sys.Date()
+
+age <- as.numeric(today - brth_date) / 365.25
+
+#--------------------------------------------------
+# Step 10: Datetime Conversion
+#--------------------------------------------------
+var3 <- as.POSIXct(dt$data_time,
+                   format="%a %b %d %H:%M:%S %Y",
+                   tz="EST")
+
+#--------------------------------------------------
+# Step 11: Lubridate Functions
+#--------------------------------------------------
+install.packages("lubridate")
+library(lubridate)
+
+year(var3)
+month(var3)
+day(var3)
+hour(var3)
+minute(var3)
+second(var3)
+
+mdy("January 21,2022")
+ymd("2022-01-21")
+dmy("21-01-2022")
