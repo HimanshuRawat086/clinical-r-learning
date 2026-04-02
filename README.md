@@ -302,3 +302,24 @@ df (text data)
 Purpose
 
 To demonstrate string operations, regex usage, and text data handling in R.
+
+Overview
+
+Program demonstrates date and datetime handling, formatting, conversion, and extraction using base R and lubridate.
+
+Input Datasets
+Dates_exercise.xlsx
+Key Derivations
+Conversion of character to Date
+Date formatting and uppercase transformation
+Date difference calculation
+Extracting weekday and month
+System date/time usage
+Age calculation
+Conversion to POSIXct datetime
+Date component extraction using lubridate
+Output Dataset
+dt (with derived date variables)
+Purpose
+
+To demonstrate handling and manipulation of date and datetime variables in R.
