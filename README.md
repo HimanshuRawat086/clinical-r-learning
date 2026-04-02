@@ -284,3 +284,21 @@ emp (with Bonus variable)
 Purpose
 
 To demonstrate data handling, filtering, derivations, and text processing in R.
+
+Overview
+
+Program demonstrates mathematical operations, string handling, pattern matching, file reading, and substitution functions in R.
+
+Input Datasets
+Homicides.txt
+Key Derivations
+Power calculation (3^4)
+Pattern matching using grep/grepl
+String printing using print and cat
+Reading text file using readLines
+Substitution using sub and gsub
+Output Dataset
+df (text data)
+Purpose
+
+To demonstrate string operations, regex usage, and text data handling in R.
