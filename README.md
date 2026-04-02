@@ -263,3 +263,24 @@ emp (final working dataset)
 Purpose
 
 To demonstrate data import, structure validation, and basic manipulation in R.
+
+Overview
+
+Program performs data import, subsetting, indexing, summary statistics, and string pattern matching in R.
+
+Input Datasets
+Dummy_txt.txt
+employee_data_exported_01.csv
+Population.xlsx
+Key Derivations
+Data import using read.table, read.csv, read_excel
+Row/column subsetting
+Conditional filtering (Salary > 50000)
+Bonus calculation (10% of salary)
+Summary statistics
+Pattern matching using grep
+Output Dataset
+emp (with Bonus variable)
+Purpose
+
+To demonstrate data handling, filtering, derivations, and text processing in R.
