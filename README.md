@@ -323,3 +323,24 @@ dt (with derived date variables)
 Purpose
 
 To demonstrate handling and manipulation of date and datetime variables in R.
+
+Overview
+
+Program demonstrates control structures, conditional logic, loops, apply family functions, vectorization, and functional programming in R.
+
+Input Datasets
+No external input datasets
+Key Derivations
+Conditional mapping using switch, ifelse, case_when
+Looping using for, while, repeat
+Nested loops
+Apply family usage (apply, lapply, sapply, tapply, mapply)
+Custom function creation and vectorization
+Matrix operations and aggregations
+Data transformation using dplyr
+Output Dataset
+df (with result classification)
+data2 (binary transformed dataset)
+Purpose
+
+To demonstrate programming constructs and functional operations in R.
