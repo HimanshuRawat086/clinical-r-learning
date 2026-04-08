@@ -344,3 +344,25 @@ data2 (binary transformed dataset)
 Purpose
 
 To demonstrate programming constructs and functional operations in R.
+
+Overview
+
+Program performs data standardization, merging, joins, deduplication, stacking, SQL joins, and export to XPT format in clinical-style workflow.
+
+Input Datasets
+Table_1.xlsx (Primary subject-level dataset)
+Table_2.xlsx (Supplementary dataset)
+Table_3.xlsx (Additional subject-level dataset)
+Key Derivations
+Column name standardization (lowercase)
+Variable renaming (gender → sex, subjectid → pat_id)
+Dataset joins (merge, dplyr joins, SQL joins)
+Deduplication using distinct
+Row/column binding
+Cross join generation
+Export to XPT format
+Output Dataset
+df1 (final processed dataset exported as XPT)
+Purpose
+
+To demonstrate clinical-style dataset merging, transformation, and export using R.
