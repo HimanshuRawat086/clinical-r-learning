@@ -1,0 +1,137 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+
+#--------------------------------------------------
+# Step 2: Set Working Directory
+#--------------------------------------------------
+getwd()
+setwd("/Users/himanshurawat/R_Training/Mar2026/Output")
+getwd()
+list.files()
+
+#--------------------------------------------------
+# Step 3: Load Libraries
+#--------------------------------------------------
+library(readxl)
+library(dplyr)
+library(stringr)
+
+install.packages("sqldf")
+library(sqldf)
+
+install.packages("xportr")
+library(xportr)
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+df1 <- read_excel("Table_1.xlsx")
+df2 <- read_excel("Table_2.xlsx")
+
+df1
+df2
+
+#--------------------------------------------------
+# Step 5: Column Standardization
+#--------------------------------------------------
+colnames(df1)
+names(df1)
+
+colnames(df1) <- tolower(colnames(df1))
+names(df2) <- tolower(names(df2))
+
+str_to_lower(colnames(df1))
+str_to_upper(colnames(df1))
+str_to_sentence(colnames(df1))
+
+#--------------------------------------------------
+# Step 6: Base Merge Operations
+#--------------------------------------------------
+merge(df1, df2, by="subjectid")
+merge(df1, df2, by="subjectid", all=TRUE)
+merge(df1, df2, by="subjectid", all.x=TRUE)
+merge(df1, df2, by="subjectid", all.y=TRUE)
+
+merge(df1, df2,
+      by.x=c("subjectid","gender"),
+      by.y=c("subjectid","sex"),
+      all=TRUE)
+
+#--------------------------------------------------
+# Step 7: Rename and Merge
+#--------------------------------------------------
+df1_new <- df1 %>%
+  rename(sex=gender)
+
+merge(df2, df1_new,
+      by=c("subjectid","sex"))
+
+#--------------------------------------------------
+# Step 8: dplyr Joins
+#--------------------------------------------------
+left_join(df1, df2, by="subjectid")
+right_join(df1, df2, by="subjectid")
+inner_join(df1, df2, by="subjectid")
+full_join(df1, df2, by="subjectid")
+
+df1 %>%
+  rename(pat_id=subjectid) %>%
+  full_join(df2, by=c("pat_id"="subjectid")) %>%
+  arrange(pat_id)
+
+#--------------------------------------------------
+# Step 9: Multi-table Join
+#--------------------------------------------------
+df3 <- read_excel("Table_3.xlsx")
+
+df1 %>%
+  rename(pat_id=subjectid) %>%
+  full_join(df2, by=c("pat_id"="subjectid")) %>%
+  inner_join(df3, by=c("pat_id"="PAT_ID"))
+
+#--------------------------------------------------
+# Step 10: Deduplication
+#--------------------------------------------------
+distinct(df1)
+distinct(df1, subjectid, .keep_all=TRUE)
+
+#--------------------------------------------------
+# Step 11: Binding Operations
+#--------------------------------------------------
+bind_rows(df1, df2)
+bind_cols(df1, df2)
+
+rbind(df1, df2)
+cbind(df1, df2)
+
+#--------------------------------------------------
+# Step 12: SQL Joins
+#--------------------------------------------------
+sqldf("SELECT * FROM df1 a LEFT JOIN df2 b
+       ON a.subjectid=b.subjectid")
+
+sqldf("SELECT * FROM df1 a, df2 b WHERE
+       a.subjectid=b.subjectid")
+
+sqldf("SELECT * FROM df2 a LEFT JOIN df1 b
+       ON a.subjectid=b.subjectid")
+
+#--------------------------------------------------
+# Step 13: Cross Join
+#--------------------------------------------------
+merge(df1, df2, by=NULL)
+dplyr::cross_join(df1, df2)
+
+#--------------------------------------------------
+# Step 14: Export to XPT
+#--------------------------------------------------
+xportr_write(df1,
+"/Users/himanshurawat/R_Training/MAR2026/Output/output.xpt")
+
+#--------------------------------------------------
+# Step 15: System Info
+#--------------------------------------------------
+installed.packages()
+search()
