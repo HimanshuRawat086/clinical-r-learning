@@ -366,3 +366,28 @@ df1 (final processed dataset exported as XPT)
 Purpose
 
 To demonstrate clinical-style dataset merging, transformation, and export using R.
+
+
+Overview
+
+Program generates a clinical-style AE summary table with counts, percentages, and event counts, and exports formatted RTF tables using r2rtf.
+
+Input Datasets
+adsl (Population dataset)
+adae (Adverse Events dataset)
+Key Derivations
+Subject count per AE and treatment
+Event count per AE and treatment
+Population denominator per treatment
+Percentage calculation
+Wide format table creation
+Missing value handling
+RTF table generation with headers, titles, and footnotes
+Output Dataset
+tab_cnt (final AE summary table)
+table1.rtf
+table2.rtf
+table3.rtf
+Purpose
+
+To create a regulatory-style AE summary table for reporting using ADaM datasets.
