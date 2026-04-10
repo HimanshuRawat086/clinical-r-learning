@@ -1,0 +1,175 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(dplyr)
+library(r2rtf)
+library(tidyr)
+
+install.packages("janitor")
+library(janitor)
+
+#--------------------------------------------------
+# Step 3: Load ADaM Data
+#--------------------------------------------------
+adsl <- r2rtf_adsl
+adae <- r2rtf_adae
+
+#--------------------------------------------------
+# Step 4: FATIGUE Count
+#--------------------------------------------------
+fatigue_cnt <- adae %>%
+  filter(AEDECOD == "FATIGUE") %>%
+  group_by(TRTA) %>%
+  summarise(sub_cnt = n_distinct(USUBJID))
+
+#--------------------------------------------------
+# Step 5: AE Counts
+#--------------------------------------------------
+ae_cnt <- adae %>%
+  group_by(TRTA, AEDECOD) %>%
+  summarise(
+    sub_cnt = n_distinct(USUBJID),
+    evt_cnt = n()
+  )
+
+#--------------------------------------------------
+# Step 6: Population Count
+#--------------------------------------------------
+pop_cnt <- adsl %>%
+  group_by(ARM) %>%
+  summarise(
+    denom_cnt = n_distinct(USUBJID)
+  ) %>%
+  rename(TRTA = ARM)
+
+#--------------------------------------------------
+# Step 7: Merge and Percentage
+#--------------------------------------------------
+tab_cnt <- merge(ae_cnt, pop_cnt, by = "TRTA") %>%
+  mutate(
+    pct = paste0(
+      as.character(sub_cnt),
+      " (",
+      as.character(round((sub_cnt/denom_cnt)*100,2)),
+      ") [",
+      as.character(evt_cnt),
+      "]"
+    )
+  )
+
+#--------------------------------------------------
+# Step 8: Wide Format
+#--------------------------------------------------
+tab_cnt <- tab_cnt %>%
+  pivot_wider(
+    id_cols = AEDECOD,
+    names_from = TRTA,
+    values_from = pct
+  )
+
+#--------------------------------------------------
+# Step 9: Clean Names
+#--------------------------------------------------
+tab_cnt <- tab_cnt %>%
+  clean_names("none")
+
+#--------------------------------------------------
+# Step 10: Handle Missing
+#--------------------------------------------------
+tab_cnt <- tab_cnt %>%
+  mutate(
+    Placebo1 = replace_na(Placebo, "0"),
+    Xanomeline_High_Dose1 = replace_na(Xanomeline_High_Dose, "0"),
+    Xanomeline_Low_Dose1 = replace_na(Xanomeline_Low_Dose, "0")
+  ) %>%
+  select(
+    AEDECOD,
+    Xanomeline_High_Dose1,
+    Xanomeline_Low_Dose1,
+    Placebo1
+  )
+
+#--------------------------------------------------
+# Step 11: RTF Table 1
+#--------------------------------------------------
+tab_cnt %>%
+  rtf_body() %>%
+  rtf_encode() %>%
+  write_rtf("table1.rtf")
+
+#--------------------------------------------------
+# Step 12: RTF Table 2
+#--------------------------------------------------
+head(tab_cnt) %>%
+  rtf_body(col_rel_width = c(4,2,2,2)) %>%
+  rtf_encode() %>%
+  write_rtf("table2.rtf")
+
+#--------------------------------------------------
+# Step 13: RTF Table 3
+#--------------------------------------------------
+head(tab_cnt) %>%
+  rtf_colheader(
+    colheader = " | Treatment",
+    col_rel_width = c(3,6)
+  ) %>%
+  rtf_colheader(
+    colheader = "Adverse Events | High Dose \n n(%)[E] | Low Dose\n n(%)[E] | Placebo \n n(%)[E]",
+    col_rel_width = c(3,2,2,2)
+  ) %>%
+  rtf_body(col_rel_width = c(3,2,2,2)) %>%
+  rtf_encode() %>%
+  write_rtf("table3.rtf")
+
+#--------------------------------------------------
+# Step 14: Formatting Options
+#--------------------------------------------------
+rtf_body(text_justification = c("l","c","c","c"))
+rtf_body(text_format = c("b","","","i"))
+
+rtf_page(border_first = "single", border_last = "single")
+
+rtf_colheader(border_left = c("","","",""),
+              border_right = c("","","",""))
+
+rtf_body(border_left = c("","","",""),
+         border_right = c("","","",""))
+
+#--------------------------------------------------
+# Step 15: Titles and Footnotes
+#--------------------------------------------------
+rtf_title(
+  title = c("Adverse Event Count", "(Example)", "Safety Population"),
+  subtitle = "Demo",
+  text_justification = "l"
+)
+
+rtf_footnote(
+  footnote = c("MedRA v23","adam-adae"),
+  as_table = TRUE
+)
+
+rtf_footnote(
+  footnote = c("Footnote1","Footnote2"),
+  text_space_before = 500,
+  text_space_after = 400,
+  as_table = FALSE
+)
+
+rtf_source(
+  source = "[datasource: adae]",
+  as_table = TRUE
+)
+
+#--------------------------------------------------
+# Step 16: Cut-off Date
+#--------------------------------------------------
+cut_off_date <- toupper(format(Sys.Date(), "%d%b%Y"))
