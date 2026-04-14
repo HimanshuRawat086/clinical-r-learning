@@ -409,3 +409,24 @@ df_air (working dataset)
 Purpose
 
 To demonstrate graphical visualization of environmental data using base R.
+
+Overview
+
+Program generates a clinical AE summary table with subject counts, percentages, and event counts, and produces a formatted RTF report.
+
+Input Datasets
+adsl (population dataset)
+adae (adverse events dataset)
+Key Derivations
+AE subject and event counts by treatment
+Population denominator derivation
+Percentage calculation n(%) [E]
+Pivot to wide format
+Missing value imputation
+RTF table formatting with titles, headers, footnotes, and source
+Output Dataset
+tab_cnt (final AE summary table)
+final_report.rtf
+Purpose
+
+To create a regulatory-style AE summary report using ADaM datasets and export to RTF.
