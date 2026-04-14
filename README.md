@@ -391,3 +391,21 @@ table3.rtf
 Purpose
 
 To create a regulatory-style AE summary table for reporting using ADaM datasets.
+
+Overview
+
+Program demonstrates data visualization techniques including boxplots, histograms, and scatter plots using base R graphics.
+
+Input Datasets
+airquality (inbuilt dataset)
+Key Derivations
+Boxplots (single and grouped by Month)
+Histogram plots for numeric variables
+Multi-plot layout using par()
+Scatter plots with customization
+Factor conversion and level extraction
+Output Dataset
+df_air (working dataset)
+Purpose
+
+To demonstrate graphical visualization of environmental data using base R.
