@@ -1,0 +1,94 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Dataset
+#--------------------------------------------------
+df_air <- datasets::airquality
+
+#--------------------------------------------------
+# Step 3: Boxplots
+#--------------------------------------------------
+boxplot(df_air$Ozone)
+
+with(data=df_air,
+     expr=boxplot(Temp))
+
+with(data=df_air,
+     expr=boxplot(Temp ~ Month))
+
+with(data=df_air,
+     expr=boxplot(Temp ~ Month,
+                  col=c("#CD0BBC","blue","green","yellow","grey62")))
+
+with(data=df_air,
+     expr=boxplot(Temp ~ Month,
+                  Col=Month))
+
+#--------------------------------------------------
+# Step 4: Factor Handling
+#--------------------------------------------------
+with(data=df_air,
+     expr=as.factor(Month))
+
+levels(with(data=df_air,
+            expr=as.factor(Month)))
+
+with(data=df_air,
+     expr=boxplot(Temp ~ Month,
+                  col=levels(as.factor(Month))))
+
+#--------------------------------------------------
+# Step 5: Histograms
+#--------------------------------------------------
+hist(df_air$Ozone)
+hist(df_air$Solar.R)
+hist(df_air$Temp)
+hist(df_air$Wind)
+
+#--------------------------------------------------
+# Step 6: Plot Layout
+#--------------------------------------------------
+par(mfrow=c(1,4))
+par(mfrow=c(1,1))
+
+#--------------------------------------------------
+# Step 7: Scatter Plots
+#--------------------------------------------------
+plot(x=df_air$Ozone,
+     y=df_air$Temp)
+
+plot(x=df_air$Ozone,
+     y=df_air$Temp,
+     type="p")
+
+plot(x=df_air$Ozone,
+     y=df_air$Temp,
+     col="green",
+     pch=1)
+
+with(data=df_air,
+     plot(x=Ozone,
+          y=Temp,
+          col="yellowgreen"))
+
+#--------------------------------------------------
+# Step 8: Color by Factor (Corrected)
+#--------------------------------------------------
+mlev <- levels(as.factor(df_air$Month))
+
+with(data=df_air,
+     plot(x=Ozone,
+          y=Temp,
+          col=mlev))
+
+#--------------------------------------------------
+# Step 9: Additional Plot
+#--------------------------------------------------
+plot(x=df_air$Ozone,
+     y=df_air$Month)
