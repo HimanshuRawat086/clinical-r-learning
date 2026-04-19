@@ -1,0 +1,71 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Dataset - Airquality
+#--------------------------------------------------
+df_air <- airquality
+
+#--------------------------------------------------
+# Step 3: Linear Models
+#--------------------------------------------------
+model1 <- with(data=df_air, expr=lm(Ozone ~ Temp))
+model2 <- with(data=df_air, expr=lm(Ozone ~ Wind))
+
+#--------------------------------------------------
+# Step 4: Plot with Regression Line
+#--------------------------------------------------
+with(data=df_air, expr=plot(Ozone ~ Temp, col="grey"))
+abline(model1, col="blue", lwd=2)
+
+with(data=df_air, expr=plot(Ozone ~ Wind, col="purple"))
+abline(model2, col="blue", lwd=2)
+
+#--------------------------------------------------
+# Step 5: Load Penguins Data
+#--------------------------------------------------
+class(df)
+
+df <- penguins
+
+#--------------------------------------------------
+# Step 6: ggplot Linear Model
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point() +
+  geom_smooth(method="lm")
+
+#--------------------------------------------------
+# Step 7: ggplot LOESS
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point() +
+  geom_smooth(method="loess")
+
+#--------------------------------------------------
+# Step 8: Self Relationship
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_length_mm)) +
+  geom_point() +
+  geom_smooth(method="lm")
+
+#--------------------------------------------------
+# Step 9: Grouped Regression
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_length_mm,
+                   col=species)) +
+  geom_point() +
+  geom_smooth(method="lm")
