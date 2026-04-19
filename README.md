@@ -448,3 +448,21 @@ df (working dataset)
 Purpose
 
 To create professional visualizations using ggplot2 for exploratory data analysis.
+
+Overview
+
+Program demonstrates linear modeling, regression visualization using base R and ggplot2, and comparison of smoothing methods.
+
+Input Datasets
+airquality
+penguins dataset
+Key Derivations
+Linear regression models (Ozone ~ Temp, Ozone ~ Wind)
+Visualization with regression line using abline
+ggplot regression using lm and loess
+Grouped regression by species
+Output Dataset
+model1, model2 (linear models)
+Purpose
+
+To demonstrate regression modeling and visualization techniques in R.
