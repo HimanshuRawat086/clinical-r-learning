@@ -1,0 +1,99 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(r2rtf)
+library(rlang)
+
+#--------------------------------------------------
+# Step 3: Define Metadata
+#--------------------------------------------------
+output_title <- "Listing 16.2.3 Assignment to Analysis Populations"
+output_name <- "Listing 16.2.3"
+output_footnote <- ""
+
+path_adam <- "/Users/himanshurawat/R_Training/MAR2026/Output"
+output_path <- "/Users/himanshurawat/R_Training/MAR2026/Output"
+
+#--------------------------------------------------
+# Step 4: Read ADSL
+#--------------------------------------------------
+adsl <- read_sas(paste0(path_adam,"/adsl.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Derive Analysis Population
+#--------------------------------------------------
+ana_pop <- adsl %>%
+  mutate(across(
+    .cols = c(RANDFL, ITTFL, SAFFL, PPROTFL),
+    .fns = ~case_when(
+      .x == "Y" ~ "YES",
+      .x == "N" ~ "NO"
+    )
+  )) %>%
+  select(USUBJID, RANDFL, ITTFL, SAFFL, PPROTFL)
+
+#--------------------------------------------------
+# Step 6: Report Date
+#--------------------------------------------------
+report_dt <- toupper(format(Sys.Date(), "%d%b%Y"))
+
+#--------------------------------------------------
+# Step 7: RTF Listing
+#--------------------------------------------------
+ana_pop %>%
+  
+  rtf_page(border_first = "single",
+           border_last = "single") %>%
+  
+  rtf_page_header(
+    text = c("AAA", "Page \\pagenumber of \\totalpage"),
+    text_justification = c("l","r")
+  ) %>%
+  
+  rtf_title(
+    output_title,
+    text_justification = "l"
+  ) %>%
+  
+  rtf_colheader(
+    "| Included in",
+    col_rel_width = c(3,6),
+    text_justification = c("l","c"),
+    border_left = c("",""),
+    border_right = c("","")
+  ) %>%
+  
+  rtf_colheader(
+    "Subject \n Number | Randomized \n Population | ITT \n Population |
+     Safety \n Population | PP \n Population",
+    col_rel_width = c(3,2,2,2,2),
+    text_justification = c("l","c","c","c","c"),
+    border_left = c("","","","",""),
+    border_right = c("","","","","")
+  ) %>%
+  
+  rtf_body(
+    col_rel_width = c(3,2,2,2,2),
+    text_justification = c("l","c","c","c","c"),
+    border_left = c("","","","",""),
+    border_right = c("","","","","")
+  ) %>%
+  
+  rtf_page_footer(
+    text = paste0("Report Date :", report_dt),
+    text_justification = "l"
+  ) %>%
+  
+  rtf_encode() %>%
+  
+  write_rtf(paste0(output_path,"/Listing 16.2.3.rtf"))
