@@ -1,0 +1,115 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(ggplot2)
+
+install.packages("palmerpenguins")
+library(palmerpenguins)
+
+#--------------------------------------------------
+# Step 3: Load Dataset
+#--------------------------------------------------
+df <- penguins
+
+#--------------------------------------------------
+# Step 4: Basic ggplot
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm))
+
+#--------------------------------------------------
+# Step 5: Scatter Plot
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point()
+
+#--------------------------------------------------
+# Step 6: Scatter + Regression
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point() +
+  geom_smooth(method="lm")
+
+#--------------------------------------------------
+# Step 7: Color by Species
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm,
+                   col=species)) +
+  geom_point()
+
+#--------------------------------------------------
+# Step 8: Color + Regression
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm,
+                   col=species)) +
+  geom_point() +
+  geom_smooth(method="lm")
+
+#--------------------------------------------------
+# Step 9: Bar Plot
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=island,
+                   fill=sex)) +
+  geom_bar()
+
+#--------------------------------------------------
+# Step 10: Bar Plot (Dodge)
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=island,
+                   fill=sex)) +
+  geom_bar(position="dodge")
+
+#--------------------------------------------------
+# Step 11: Histogram
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=flipper_length_mm,
+                   fill=species)) +
+  geom_histogram(alpha=0.6)
+
+#--------------------------------------------------
+# Step 12: Density Plot
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=flipper_length_mm,
+                   fill=species)) +
+  geom_density()
+
+#--------------------------------------------------
+# Step 13: Theme
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point() +
+  theme_bw()
+
+#--------------------------------------------------
+# Step 14: Labels
+#--------------------------------------------------
+ggplot(data=df,
+       mapping=aes(x=bill_length_mm,
+                   y=bill_depth_mm)) +
+  geom_point() +
+  labs(title="Scatter Plot",
+       x="Bill Length",
+       y="Bill Depth")
