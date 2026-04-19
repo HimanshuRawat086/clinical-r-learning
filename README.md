@@ -433,22 +433,18 @@ To create a regulatory-style AE summary report using ADaM datasets and export to
 
 Overview
 
-Program performs data standardization, merging, joins, deduplication, stacking, SQL joins, and export to XPT format in clinical-style workflow.
+Program demonstrates data visualization using ggplot2 including scatter plots, regression lines, bar plots, histograms, density plots, and plot customization.
 
 Input Datasets
-Table_1.xlsx (Primary subject-level dataset)
-Table_2.xlsx (Supplementary dataset)
-Table_3.xlsx (Additional subject-level dataset)
+penguins dataset
 Key Derivations
-Column name standardization (lowercase)
-Variable renaming (gender → sex, subjectid → pat_id)
-Dataset joins (merge, dplyr joins, SQL joins)
-Deduplication using distinct
-Row/column binding
-Cross join generation
-Export to XPT format
+Scatter plots with and without grouping
+Regression line using geom_smooth
+Bar plots with stacking and dodging
+Histogram and density plots
+Theme and labeling customization
 Output Dataset
-df1 (final processed dataset exported as XPT)
+df (working dataset)
 Purpose
 
-To demonstrate clinical-style dataset merging, transformation, and export using R.
+To create professional visualizations using ggplot2 for exploratory data analysis.
