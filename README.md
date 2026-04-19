@@ -466,3 +466,21 @@ model1, model2 (linear models)
 Purpose
 
 To demonstrate regression modeling and visualization techniques in R.
+
+Overview
+
+Program generates a clinical listing (Listing 16.2.3) showing subject-level assignment to analysis populations and exports it as an RTF report.
+
+Input Datasets
+adsl (ADaM dataset)
+Key Derivations
+Conversion of Y/N flags to YES/NO
+Selection of population flags
+RTF formatting with header, title, column headers, body, and footer
+Report date generation
+Output Dataset
+ana_pop
+Listing 16.2.3.rtf
+Purpose
+
+To create a regulatory-compliant subject listing for analysis population flags.
