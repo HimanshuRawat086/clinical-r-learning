@@ -1,0 +1,119 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(r2rtf)
+library(tidyr)
+library(stringr)
+library(rlang)
+
+#--------------------------------------------------
+# Step 3: Define Metadata
+#--------------------------------------------------
+output_name <- "Listing 16.2.8.1"
+
+output_title <- "Listing 16.2.8.1 Biochemistry"
+
+output_footnote <- "H: high; L: low; CS: clinically significant; NCS: not clinically significant.
+Baseline is defined as the last observation prior to first drug administration."
+
+#--------------------------------------------------
+# Step 4: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+list.files()
+
+#--------------------------------------------------
+# Step 5: Read ADLB
+#--------------------------------------------------
+adlb <- read_sas("adlbe.sas7bdat")
+
+head(adlb)
+class(adlb)
+
+adlb %>% filter(PARCAT1=="CHEMISTRY")
+
+#--------------------------------------------------
+# Step 6: Biochemistry Listing
+#--------------------------------------------------
+bio_chem_list <- adlb %>%
+  filter(PARCAT1=="CHEMISTRY") %>%
+  mutate(
+    L_H = paste0(as.character(ANRLO), "-", as.character(ANRHI)),
+    INV_INT = ""
+  ) %>%
+  arrange(USUBJID, PARAMN, AVISITN, ADTM) %>%
+  select(USUBJID, PARAM, BNRIND, AVISIT, ADTM, AVAL, CHG, L_H, INV_INT)
+
+#--------------------------------------------------
+# Step 7: Output Path and Date
+#--------------------------------------------------
+output_path <- "/Users/himanshurawat/R_Training/MAR2026/Output"
+report_dt <- toupper(format(Sys.Date(), "%d%b%Y"))
+
+#--------------------------------------------------
+# Step 8: RTF Listing
+#--------------------------------------------------
+bio_chem_list %>%
+  rtf_page(border_first = "single", border_last = "single") %>%
+  rtf_title(output_title, text_justification = "l") %>%
+  rtf_page_header(text="AAA CONFIDENTIAL\nStudy-123",
+                  text_justification = "c") %>%
+  rtf_colheader(
+    "Subject Number | Test (Unit) | Reference Range | Time Point |
+Date/Time of Measurement | Result | Change from Baseline |
+Out of Range | Investigator Interpretation",
+    col_rel_width = c(4.5,4, rep(2,7)),
+    text_justification = c("l", rep("c",8))
+  ) %>%
+  rtf_body(
+    col_rel_width = c(4.5,4, rep(2,7)),
+    text_justification = c("l", rep("c",8))
+  ) %>%
+  rtf_footnote(output_footnote,
+               text_justification = "l") %>%
+  rtf_page_footer(
+    text = c(report_dt,"CONFIDENTIAL",
+             "Page \\pagenumber of \\totalpage"),
+    text_justification = c("l","c","r")
+  ) %>%
+  rtf_encode() %>%
+  write_rtf(paste0(output_path,"/",output_name,".rtf"))
+
+#--------------------------------------------------
+# Step 9: Vital Signs Data
+#--------------------------------------------------
+advs <- read_sas("advs.sas7bdat")
+
+advs <- data.frame(
+  USUBJID = c("SUBJ001","SUBJ002"),
+  PARAM = c("Systolic BP","Diastolic BP"),
+  PARAMN = c(1,2),
+  AVISIT = c("BASELINE","WEEK1"),
+  AVISITN = c(1,2),
+  ADTM = c("2024-01-01","2024-01-10"),
+  AVAL = c(120,80),
+  CHG = c(0,-5),
+  CRIT1 = c("N","H")
+)
+
+#--------------------------------------------------
+# Step 10: Vital Signs Listing
+#--------------------------------------------------
+vital_sign_list <- advs %>%
+  mutate(
+    INV_INT = "",
+    AVAL1 = sprintf("%.3f", AVAL),
+    AVAL2 = round(AVAL,3),
+    CHG1 = sprintf("%.3f", CHG)
+  ) %>%
+  arrange(USUBJID, PARAMN, AVISITN, ADTM) %>%
+  select(USUBJID, PARAM, AVISIT, ADTM,
+         AVAL, AVAL2, AVAL1, CHG1, CRIT1, INV_INT)
