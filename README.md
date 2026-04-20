@@ -484,3 +484,25 @@ Listing 16.2.3.rtf
 Purpose
 
 To create a regulatory-compliant subject listing for analysis population flags.
+
+Overview
+
+Program generates clinical listings for Biochemistry (Lab) and Vital Signs using ADaM datasets and exports formatted RTF reports.
+
+Input Datasets
+ADLB (Lab dataset)
+ADVS (Vital Signs dataset)
+Key Derivations
+Filtering Chemistry records
+Reference range derivation (ANRLO–ANRHI)
+Sorting by subject, parameter, visit, datetime
+Formatting numeric values
+Creating investigator interpretation field
+RTF formatting (headers, body, footnotes, pagination)
+Output Dataset
+bio_chem_list (Biochemistry listing)
+vital_sign_list (Vital Signs listing)
+Listing 16.2.8.1.rtf
+Purpose
+
+To generate regulatory-style listings for lab and vital signs data with proper formatting and reporting standards.
