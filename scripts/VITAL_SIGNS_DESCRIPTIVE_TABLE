@@ -1,0 +1,104 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+getwd()
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(r2rtf)
+library(tidyr)
+library(stringr)
+library(rlang)
+
+#--------------------------------------------------
+# Step 3: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+getwd()
+
+#--------------------------------------------------
+# Step 4: Define Metadata
+#--------------------------------------------------
+output_name <- "Table 14.3.6.1"
+
+output_title <- "Table 14.3.6.1 Vital Signs Observed values (Safety Population)"
+
+output_footnote <- ""
+
+#--------------------------------------------------
+# Step 5: Read and Filter ADSL
+#--------------------------------------------------
+adsl <- read_sas("adsl.sas7bdat")
+adsl <- adsl %>% filter(SAFFL=="Y")
+
+#--------------------------------------------------
+# Step 6: Read and Filter ADVS
+#--------------------------------------------------
+advs <- read_sas("advs.sas7bdat")
+advs <- advs %>% filter(SAFFL=="Y")
+
+#--------------------------------------------------
+# Step 7: Create Overall Population
+#--------------------------------------------------
+adsl_over <- adsl %>% mutate(TRT01A="Overall")
+master_adsl <- rbind(adsl_over, adsl)
+
+advs_over <- advs %>% mutate(TRT01A="Overall")
+master_advs <- bind_rows(advs, advs_over)
+
+#--------------------------------------------------
+# Step 8: Population Count
+#--------------------------------------------------
+pop_cnt <- master_adsl %>%
+  group_by(TRT01A) %>%
+  summarise(denom_cnt = n_distinct(USUBJID))
+
+test <- pop_cnt$denom_cnt[3]
+placebo <- pop_cnt$denom_cnt[2]
+overall <- pop_cnt$denom_cnt[1]
+
+#--------------------------------------------------
+# Step 9: Descriptive Statistics
+#--------------------------------------------------
+des_vital_sign <- master_advs %>%
+  group_by(PARAM, AVISIT, AVISITN, TRT01A) %>%
+  summarise(
+    a_n = as.character(n()),
+    b_Mean = as.character(round(mean(AVAL, na.rm=TRUE),1)),
+    c_SD = as.character(round(sd(AVAL, na.rm=TRUE),2)),
+    d_Median = as.character(round(median(AVAL, na.rm=TRUE),1)),
+    e_Minimum = as.character(round(min(AVAL, na.rm=TRUE),1)),
+    f_Maximum = as.character(round(max(AVAL, na.rm=TRUE),1))
+  ) %>%
+  pivot_longer(
+    cols = c("a_n","b_Mean","c_SD","d_Median","e_Minimum","f_Maximum"),
+    names_to = "stat",
+    values_to = "value"
+  ) %>%
+  pivot_wider(
+    id_cols = c("PARAM","AVISIT","AVISITN","stat"),
+    names_from = "TRT01A",
+    values_from = "value"
+  ) %>%
+  mutate(stat1 = str_sub(stat, 3,)) %>%
+  arrange(PARAM, AVISITN, stat) %>%
+  ungroup() %>%
+  select(PARAM, AVISIT, stat1, Overall)
+
+#--------------------------------------------------
+# Step 10: RTF Output
+#--------------------------------------------------
+des_vital_sign %>%
+  rtf_page(border_first="single", border_last="single") %>%
+  rtf_title(output_title, text_justification="l") %>%
+  rtf_colheader(
+    paste0(
+      "Test | Visit | Stat | Treatment\n(N=", test,
+      ")|Overall\n(N=", overall, ")"
+    )
+  ) %>%
+  rtf_body(group_by = c("PARAM","AVISIT"))
