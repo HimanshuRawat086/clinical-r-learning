@@ -506,3 +506,23 @@ Listing 16.2.8.1.rtf
 Purpose
 
 To generate regulatory-style listings for lab and vital signs data with proper formatting and reporting standards.
+
+Overview
+
+Program generates a descriptive statistics table for vital signs across treatment groups including overall population, formatted for RTF output.
+
+Input Datasets
+ADSL (filtered for Safety Population)
+ADVS (filtered for Safety Population)
+Key Derivations
+Creation of Overall treatment group
+Population counts per treatment
+Descriptive statistics (n, mean, SD, median, min, max)
+Reshaping data using pivot_longer and pivot_wider
+Formatting statistics labels
+Grouped RTF table generation
+Output Dataset
+des_vital_sign (final table dataset)
+Purpose
+
+To generate a regulatory-style descriptive statistics table for vital signs (Safety Population).
