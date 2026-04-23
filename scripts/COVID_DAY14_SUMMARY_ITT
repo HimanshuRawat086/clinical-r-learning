@@ -1,0 +1,57 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(r2rtf)
+library(tidyr)
+library(stringr)
+
+#--------------------------------------------------
+# Step 3: Set Working Directory
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+#--------------------------------------------------
+# Step 4: Read and Filter ADSL
+#--------------------------------------------------
+adsl <- read_sas("adsl.sas7bdat")
+
+adsl <- adsl %>%
+  filter(ITTFL=="Y")
+
+#--------------------------------------------------
+# Step 5: Population Count
+#--------------------------------------------------
+pop_cnt <- adsl %>%
+  group_by(TRT01A) %>%
+  summarise(denom_cnt = n())
+
+test <- pop_cnt$denom_cnt[2]
+placebo <- pop_cnt$denom_cnt[1]
+
+#--------------------------------------------------
+# Step 6: Day 14 Subjects
+#--------------------------------------------------
+des_res_14 <- adsl %>%
+  filter(COVD14FL=="Y")
+
+des_res_14 <- des_res_14 %>%
+  group_by(TRT01A) %>%
+  summarise(sub_cnt = n())
+
+#--------------------------------------------------
+# Step 7: Merge and Calculate Percentage
+#--------------------------------------------------
+fin14 <- left_join(des_res_14, pop_cnt, by="TRT01A")
+
+fin14 <- fin14 %>%
+  mutate(p = sub_cnt/denom_cnt)
+
+fin14 <- fin14 %>%
+  mutate(a_pct = paste0(sub_cnt,"(", round(p*100,1),")"))
