@@ -526,3 +526,20 @@ des_vital_sign (final table dataset)
 Purpose
 
 To generate a regulatory-style descriptive statistics table for vital signs (Safety Population).
+
+Overview
+
+Program calculates treatment-wise counts and percentages of subjects meeting Day 14 COVID criteria within ITT population.
+
+Input Datasets
+ADSL filtered for ITT population
+Key Derivations
+Population count per treatment
+Subject count with COVD14FL = Y
+Proportion calculation
+Percentage formatting n(%)
+Output Dataset
+fin14 (final summary dataset)
+Purpose
+
+To generate treatment-wise summary statistics for Day 14 response in ITT population.
