@@ -1,0 +1,93 @@
+#--------------------------------------------------
+# Step 1: Race and Ethnicity Derivation
+#--------------------------------------------------
+dm1 <- dm1 %>%
+  mutate(
+    RACEN = case_when(
+      RACE == "AMERICAN INDIAN OR ALASKA NATIVE" ~ 1,
+      RACE == "ASIAN" ~ 2,
+      RACE == "BLACK OR AFRICAN AMERICAN" ~ 3,
+      RACE == "NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER" ~ 4,
+      RACE == "WHITE" ~ 5,
+      RACE == "OTHER" ~ 6,
+      RACE == "NOT REPORTED" ~ 7,
+      RACE == "" ~ 8
+    ),
+    
+    ETHNICN = case_when(
+      ETHNIC == "HISPANIC OR LATINO" ~ 1,
+      ETHNIC == "NOT HISPANIC OR LATINO" ~ 2,
+      ETHNIC == "UNKNOWN" ~ 3,
+      ETHNIC == "NOT REPORTED" ~ 4
+    )
+  )
+
+#--------------------------------------------------
+# Step 2: Treatment Variables
+#--------------------------------------------------
+dm1 <- dm1 %>%
+  mutate(
+    TRT01P = case_when(
+      ARMCD == "TQ" ~ "Tafenoquine",
+      ARMCD == "PLACEBO" ~ "Placebo"
+    ),
+    
+    TRT01PN = case_when(
+      ARMCD == "TQ" ~ 1,
+      ARMCD == "PLACEBO" ~ 2
+    ),
+    
+    TRT01A = case_when(
+      ACTARMCD == "TQ" ~ "Tafenoquine",
+      ACTARMCD == "PLACEBO" ~ "Placebo"
+    ),
+    
+    TRT01AN = case_when(
+      ACTARMCD == "TQ" ~ 1,
+      ACTARMCD == "PLACEBO" ~ 2
+    )
+  )
+
+#--------------------------------------------------
+# Step 3: Treatment Dates
+#--------------------------------------------------
+dm1 <- dm1 %>%
+  mutate(
+    TRTSDTM = ymd_hm(RFXSTDTC),
+    TRTSDT = as.Date(RFXSTDTC),
+    
+    TRTEDTM = ymd(RFXENDTC),
+    TRTEDT = as.Date(RFXENDTC),
+    
+    TRTDURD = TRTEDT - TRTSDT + 1
+  )
+
+#--------------------------------------------------
+# Step 4: Flags
+#--------------------------------------------------
+dm1 <- dm1 %>%
+  mutate(
+    SCRNFL = case_when(!is.na(RFICDTC) ~ "Y"),
+    
+    RFXSTDTC1 = as.Date(RFXSTDTC),
+    
+    SAFFL = case_when(!is.na(RFXSTDTC1) ~ "Y"),
+    
+    SAFFL1 = case_when(!is.na(RFXSTDTC) ~ "Y")
+  )
+
+#--------------------------------------------------
+# Step 5: Final ADSL Dataset
+#--------------------------------------------------
+adsl <- dm1 %>%
+  select(
+    USUBJID,
+    AGE, AGEGR1,
+    SEX, SEXN,
+    RACE, RACEN,
+    ETHNIC, ETHNICN,
+    TRT01P, TRT01PN,
+    TRT01A, TRT01AN,
+    TRTSDT, TRTEDT, TRTDURD,
+    SCRNFL, SAFFL
+  )
