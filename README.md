@@ -543,3 +543,22 @@ fin14 (final summary dataset)
 Purpose
 
 To generate treatment-wise summary statistics for Day 14 response in ITT population.
+
+
+Overview
+
+Program processes SDTM DM and SUPPDM datasets to create a subject-level dataset with derived variables following ADaM-style conventions.
+
+Input Datasets
+DM (Demographics)
+SUPPDM (Supplemental qualifiers)
+Key Derivations
+Transpose SUPPDM to wide format
+Merge DM with SUPPDM
+Derive age group (AGEGR1)
+Derive numeric sex variable (SEXN)
+Output Dataset
+dm1 (enhanced demographics dataset)
+Purpose
+
+To prepare a subject-level dataset with standardized and derived variables for analysis.
