@@ -1,0 +1,56 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read SDTM Data
+#--------------------------------------------------
+dm <- read_sas(paste0(sdtm_path,"dm.sas7bdat"))
+suppdm <- read_sas(paste0(sdtm_path,"suppdm.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Transpose SUPPDM
+#--------------------------------------------------
+suppdm1 <- suppdm %>%
+  pivot_wider(
+    id_cols = "USUBJID",
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+#--------------------------------------------------
+# Step 6: Merge DM and SUPPDM
+#--------------------------------------------------
+dm1 <- left_join(dm, suppdm1, by="USUBJID")
+
+#--------------------------------------------------
+# Step 7: Derivations
+#--------------------------------------------------
+dm1 <- dm1 %>%
+  mutate(
+    AGEGR1 = case_when(
+      AGE < 40 ~ "< 40 years old",
+      AGE >= 40 ~ ">= 40 years old"
+    ),
+    
+    SEXN = case_when(
+      SEX == "M" ~ 1,
+      SEX == "F" ~ 2
+    )
+  )
