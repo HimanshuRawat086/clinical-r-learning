@@ -562,3 +562,21 @@ dm1 (enhanced demographics dataset)
 Purpose
 
 To prepare a subject-level dataset with standardized and derived variables for analysis.
+
+Overview
+
+Program derives ADaM ADSL dataset from dm1 by creating standard demographic, treatment, and analysis variables following clinical programming conventions.
+
+Input Datasets
+dm1 (processed SDTM demographics dataset)
+Key Derivations
+Numeric encoding for Race and Ethnicity
+Treatment mapping (Planned and Actual)
+Treatment dates and duration calculation
+Screening and Safety flags derivation
+Selection of final ADSL variables
+Output Dataset
+adsl (Analysis Dataset Subject Level)
+Purpose
+
+To create a standardized ADSL dataset for downstream analysis and reporting.
