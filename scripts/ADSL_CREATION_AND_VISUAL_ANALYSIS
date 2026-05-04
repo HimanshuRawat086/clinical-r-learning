@@ -1,0 +1,123 @@
+# ==============================
+# STEP 0 — CLEAN ENVIRONMENT
+# ==============================
+rm(list = ls())
+
+# ==============================
+# STEP 1 — LOAD PACKAGES
+# ==============================
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+
+# ==============================
+# STEP 2 — SET WORKING DIRECTORY (MAC RULE 🔥)
+# ==============================
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+# ==============================
+# STEP 3 — DEFINE SDTM PATH (MAC PATH 🔥)
+# ==============================
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+
+# ==============================
+# STEP 4 — IMPORT DM + SUPPDM
+# ==============================
+dm <- read_sas(paste0(sdtm_path, "dm.sas7bdat"))
+suppdm <- read_sas(paste0(sdtm_path, "suppdm.sas7bdat"))
+
+# ==============================
+# STEP 5 — TRANSPOSE SUPPDM
+# ==============================
+suppdm1 <- suppdm %>%
+  pivot_wider(
+    id_cols = "USUBJID",
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+# ==============================
+# STEP 6 — MERGE DATA
+# ==============================
+dm1 <- left_join(dm, suppdm1, by = "USUBJID")
+
+# ==============================
+# STEP 7 — CREATE ADSL VARIABLES
+# ==============================
+dm1 <- dm1 %>%
+  mutate(
+    AGEGR1 = case_when(
+      AGE < 40 ~ "< 40 years old",
+      AGE >= 40 ~ ">= 40 years old"
+    ),
+
+    SEXN = case_when(
+      SEX == "M" ~ 1,
+      SEX == "F" ~ 2
+    )
+  )
+
+# ==============================
+# STEP 8 — FINAL ADSL DATASET
+# ==============================
+adsl <- dm1
+
+# ==============================
+# STEP 9 — SCATTER PLOT
+# ==============================
+ggplot(data = adsl, aes(x = BHGHTSI, y = BWGHTSI)) +
+  geom_point()
+
+# ==============================
+# STEP 10 — SCATTER WITH COLOR
+# ==============================
+ggplot(data = adsl, aes(x = BHGHTSI, y = BWGHTSI, color = TRT01A)) +
+  geom_point()
+
+# ==============================
+# STEP 11 — SCATTER WITH LABELS
+# ==============================
+ggplot(data = adsl, aes(x = BHGHTSI, y = BWGHTSI)) +
+  geom_point() +
+  labs(
+    title = "Height vs Weight",
+    x = "Height (cm)",
+    y = "Weight (kg)"
+  )
+
+# ==============================
+# STEP 12 — LINE PLOT
+# ==============================
+ggplot(data = adsl, aes(x = BHGHTSI, y = BWGHTSI)) +
+  geom_line()
+
+# ==============================
+# STEP 13 — PREPARE ADLB
+# ==============================
+adlb <- read_sas(paste0(sdtm_path, "adlb.sas7bdat")) %>%
+  filter(SAFFL == "Y", PARAMN == 4) %>%
+  group_by(AVISITN) %>%
+  summarise(mean_chg = mean(CHG, na.rm = TRUE))
+
+# ==============================
+# STEP 14 — LAB LINE PLOT
+# ==============================
+ggplot(data = adlb, aes(x = AVISITN, y = mean_chg)) +
+  geom_line() +
+  labs(
+    title = "Mean Change by Visit",
+    x = "Visit",
+    y = "Mean Change"
+  )
+
+# ==============================
+# STEP 15 — PIE CHART
+# ==============================
+df <- data.frame(
+  group = c("Male", "Female", "Child"),
+  value = c(25, 25, 50)
+)
+
+pie(df$value, labels = df$group)
