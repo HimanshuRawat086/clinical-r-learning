@@ -580,3 +580,23 @@ adsl (Analysis Dataset Subject Level)
 Purpose
 
 To create a standardized ADSL dataset for downstream analysis and reporting.
+
+Overview
+
+Program builds an ADSL dataset from SDTM sources and performs exploratory visualizations including scatter plots, line plots, and summary lab trends.
+
+Input Datasets
+DM and SUPPDM (SDTM)
+ADLB (Lab ADaM dataset)
+Key Derivations
+Transpose SUPPDM and merge with DM
+Derive AGEGR1 and SEXN
+Create ADSL dataset
+Aggregate lab change by visit
+Generate visualizations (scatter, line, pie chart)
+Output Dataset
+adsl (analysis dataset)
+adlb (summary dataset)
+Purpose
+
+To prepare subject-level data and perform visualization for exploratory and reporting purposes.
