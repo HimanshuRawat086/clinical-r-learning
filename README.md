@@ -600,3 +600,26 @@ adlb (summary dataset)
 Purpose
 
 To prepare subject-level data and perform visualization for exploratory and reporting purposes.
+
+Overview
+
+Program integrates multiple SDTM domains (DM, SUPPDM, VS, DS, SV) to derive subject-level variables and flags for downstream ADaM dataset creation.
+
+Input Datasets
+DM (Demographics)
+SUPPDM (Supplemental qualifiers)
+VS (Vital Signs)
+DS (Disposition)
+SV (Subject Visits)
+Key Derivations
+Transpose SUPPDM to wide format
+Extract baseline height/weight and calculate BMI
+Derive randomization flags and dates from DS
+Derive ITT population
+Derive Per Protocol flag using visit completion
+Merge all domains into a subject-level dataset
+Output Dataset
+dm4 (Integrated subject-level dataset)
+Purpose
+
+To prepare integrated subject-level data with derived variables and analysis flags for ADSL creation.
