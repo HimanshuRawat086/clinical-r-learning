@@ -1,0 +1,100 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read SDTM Domains
+#--------------------------------------------------
+dm <- read_sas(paste0(sdtm_path,"dm.sas7bdat"))
+suppdm <- read_sas(paste0(sdtm_path,"suppdm.sas7bdat"))
+vs <- read_sas(paste0(sdtm_path,"vs.sas7bdat"))
+ds <- read_sas(paste0(sdtm_path,"ds.sas7bdat"))
+sv <- read_sas(paste0(sdtm_path,"sv.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Transpose SUPPDM
+#--------------------------------------------------
+suppdm1 <- suppdm %>%
+  pivot_wider(
+    id_cols = "USUBJID",
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+#--------------------------------------------------
+# Step 6: Merge DM and SUPPDM
+#--------------------------------------------------
+dm1 <- left_join(dm, suppdm1, by="USUBJID")
+
+#--------------------------------------------------
+# Step 7: Vital Signs Derivation
+#--------------------------------------------------
+vs1 <- vs %>%
+  filter(
+    VSTESTCD %in% c("HEIGHT", "WEIGHT"),
+    VISIT == "Screening/Day -4 to -1"
+  ) %>%
+  pivot_wider(
+    id_cols = "USUBJID",
+    names_from = "VSTESTCD",
+    values_from = "VSSTRESN"
+  ) %>%
+  mutate(
+    BHGHTSI = HEIGHT,
+    BWGHTSI = WEIGHT,
+    BBMISI = (WEIGHT / (HEIGHT^2)) * 10000
+  ) %>%
+  select(USUBJID, BHGHTSI, BWGHTSI, BBMISI)
+
+#--------------------------------------------------
+# Step 8: Merge VS
+#--------------------------------------------------
+dm2 <- left_join(dm1, vs1, by="USUBJID")
+
+#--------------------------------------------------
+# Step 9: Disposition Derivation
+#--------------------------------------------------
+ds1 <- ds %>%
+  mutate(
+    sel = (DSDECOD == "RANDOMIZED" & DSSTDTC != ""),
+    RANDFL = case_when(sel ~ "Y"),
+    RANDDT = case_when(sel ~ as.Date(DSSTDTC)),
+    ITTFL = case_when(sel ~ "Y")
+  ) %>%
+  filter(!is.na(RANDDT)) %>%
+  select(USUBJID, RANDDT, RANDFL, ITTFL)
+
+#--------------------------------------------------
+# Step 10: Merge DS
+#--------------------------------------------------
+dm3 <- left_join(dm2, ds1, by="USUBJID")
+
+#--------------------------------------------------
+# Step 11: Per Protocol Flag
+#--------------------------------------------------
+sv1 <- sv %>%
+  filter(VISITNUM == 15) %>%
+  distinct(USUBJID, .keep_all = TRUE) %>%
+  select(USUBJID, VISITNUM)
+
+dm4 <- left_join(dm3, sv1, by="USUBJID") %>%
+  mutate(
+    PPROTFL = ifelse(VISITNUM == 15 & ITTFL == "Y", "Y", "N")
+  ) %>%
+  select(-VISITNUM)
