@@ -1,0 +1,182 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(stringr)
+library(admiral)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+adam_path <- "/Users/himanshurawat/R_Training/Project/ADAM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+adsl <- read_sas(paste0(adam_path,"adsl.sas7bdat"))
+
+ae <- read_sas(paste0(sdtm_path,"ae.sas7bdat"))
+
+suppae <- read_sas(paste0(sdtm_path,"suppae.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Process SUPPAE
+#--------------------------------------------------
+suppae1 <- suppae %>%
+  mutate(
+    AESEQ = as.numeric(IDVARVAL)
+  ) %>%
+  pivot_wider(
+    id_cols = c("USUBJID","AESEQ"),
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+#--------------------------------------------------
+# Step 6: Merge AE and SUPPAE
+#--------------------------------------------------
+ae1 <- left_join(
+  ae,
+  suppae1,
+  by = c("USUBJID", "AESEQ")
+) %>%
+  select(-c(STUDYID, ARM, ACTARM)) %>%
+  inner_join(adsl, by = "USUBJID")
+
+#--------------------------------------------------
+# Step 7: Severity Derivations
+#--------------------------------------------------
+ae1 <- ae1 %>%
+  mutate(
+    ASEV = ifelse(
+      AESEV == "MILD", "Mild",
+      ifelse(
+        AESEV == "MODERATE", "Moderate",
+        ifelse(
+          AESEV == "SEVERE", "Severe",
+          ifelse(
+            AESEV == "LIFE-THREATENING",
+            "Life-threatening",
+            "NA"
+          )
+        )
+      )
+    ),
+    
+    ASEVN = ifelse(
+      AESEV == "MILD", 1,
+      ifelse(
+        AESEV == "MODERATE", 2,
+        ifelse(
+          AESEV == "SEVERE", 3,
+          ifelse(
+            AESEV == "LIFE-THREATENING",
+            4,
+            NA
+          )
+        )
+      )
+    )
+  )
+
+#--------------------------------------------------
+# Step 8: Relationship Derivation
+#--------------------------------------------------
+ae1 <- ae1 %>%
+  mutate(
+    AREL = ifelse(
+      AEREL == "DEFINITELY RELATED",
+      "Definitely related",
+      
+      ifelse(
+        AEREL == "PROBABLY RELATED",
+        "Probably related",
+        
+        ifelse(
+          AEREL == "POSSIBLY RELATED",
+          "Possibly related",
+          
+          ifelse(
+            AEREL == "UNLIKELY RELATED",
+            "Unlikely related",
+            
+            ifelse(
+              AEREL == "NOT RELATED",
+              "Not related",
+              "NA"
+            )
+          )
+        )
+      )
+    )
+  )
+
+#--------------------------------------------------
+# Step 9: Relationship Grouping
+#--------------------------------------------------
+ae1 <- ae1 %>%
+  mutate(
+    RELGR1 = case_when(
+      AREL %in% c(
+        "Definitely related",
+        "Probably related",
+        "Possibly related"
+      ) ~ "Related",
+      
+      TRUE ~ "Not Related"
+    )
+  )
+
+#--------------------------------------------------
+# Step 10: Derive AE Start Date
+#--------------------------------------------------
+ae1 <- ae1 %>%
+  derive_vars_dtm(
+    dtc = AESTDTC,
+    new_vars_prefix = "AST",
+    highest_imputation = "D",
+    time_imputation = "first",
+    date_imputation = "first"
+  ) %>%
+  derive_vars_dtm_to_dt(exprs(ASTDTM))
+
+#--------------------------------------------------
+# Step 11: Treatment Emergent Flag
+#--------------------------------------------------
+ae1 <- ae1 %>%
+  mutate(
+    TRTEMFL = if_else(
+      ASTDT >= TRTSDT,
+      "Y",
+      "N"
+    )
+  )
+
+#--------------------------------------------------
+# Step 12: Final ADAE Dataset
+#--------------------------------------------------
+ADAE <- ae1 %>%
+  select(
+    USUBJID,
+    TRT01A,
+    AESEQ,
+    AETERM,
+    AEDECOD,
+    ASEV,
+    ASEVN,
+    AREL,
+    RELGR1,
+    ASTDT,
+    TRTEMFL
+  )
