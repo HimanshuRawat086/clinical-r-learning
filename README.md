@@ -665,3 +665,25 @@ cm1 (Enhanced Concomitant Medication dataset)
 Purpose
 
 To prepare standardized ADaM-ready Medical History and Concomitant Medication datasets for analysis and reporting.
+
+Overview
+
+Program creates an ADaM ADAE dataset by integrating AE and SUPPAE domains with ADSL and deriving severity, relationship, and treatment-emergent variables.
+
+Input Datasets
+ADSL
+AE
+SUPPAE
+Key Derivations
+Transpose SUPPAE into wide format
+Merge AE with SUPPAE and ADSL
+Derive AE severity text and numeric grade
+Derive AE relationship variables
+Create relationship grouping variable
+Derive AE start datetime/date using admiral
+Derive treatment-emergent flag
+Output Dataset
+ADAE (Analysis Adverse Events Dataset)
+Purpose
+
+To prepare a standardized ADaM ADAE dataset for safety analysis and reporting.
