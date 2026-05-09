@@ -1,0 +1,85 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+adam_path <- "/Users/himanshurawat/R_Training/Project/ADAM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+adsl <- read_sas(paste0(adam_path,"adsl.sas7bdat"))
+face <- read_sas(paste0(sdtm_path,"face.sas7bdat"))
+ds <- read_sas(paste0(sdtm_path,"ds.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: COVID Symptom Flags
+#--------------------------------------------------
+face1 <- face %>%
+  filter(
+    FACAT == "SIGNS AND SYMPTOMS OF COVID-19",
+    FASTRESC == "PRESENT"
+  ) %>%
+  mutate(
+    COVD14FL = ifelse(VISITNUM <= 15, "Y", "N"),
+    COVD28FL = ifelse(VISITNUM <= 29, "Y", "N")
+  ) %>%
+  select(
+    USUBJID,
+    FATEST,
+    VISITNUM,
+    COVD14FL,
+    COVD28FL
+  )
+
+#--------------------------------------------------
+# Step 6: Disposition Derivation
+#--------------------------------------------------
+ds1 <- ds %>%
+  mutate(
+    EOSSTT = case_when(
+      DSDECOD == "COMPLETED" ~ "COMPLETED",
+      TRUE ~ "DISCONTINUED"
+    ),
+    
+    EOSDT = as.Date(DSSTDTC),
+    
+    DCSREAS = case_when(
+      DSDECOD == "ADVERSE EVENT" ~ "Adverse Event",
+      DSDECOD == "PHYSICIAN DECISION" ~ "Physician Decision",
+      DSDECOD == "WITHDRAWAL BY SUBJECT" ~ "Withdrawal by Subject",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  select(
+    USUBJID,
+    EOSSTT,
+    EOSDT,
+    DCSREAS
+  )
+
+#--------------------------------------------------
+# Step 7: Merge Final ADSL
+#--------------------------------------------------
+adsl_final <- adsl %>%
+  left_join(face1, by="USUBJID") %>%
+  left_join(ds1, by="USUBJID")
+
+#--------------------------------------------------
+# Step 8: Review Variables
+#--------------------------------------------------
+colnames(adsl_final)
