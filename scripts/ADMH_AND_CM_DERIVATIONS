@@ -1,0 +1,160 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+sdtm_path <- "/Users/himanshurawat/R_Training/Project/SDTM/"
+adam_path <- "/Users/himanshurawat/R_Training/Project/ADAM/"
+
+#--------------------------------------------------
+# Step 4: Read MH Data
+#--------------------------------------------------
+adsl <- read_sas(paste0(adam_path,"adsl.sas7bdat"))
+
+mh <- read_sas(paste0(sdtm_path,"mh.sas7bdat"))
+suppmh <- read_sas(paste0(sdtm_path,"suppmh.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Process SUPPMH
+#--------------------------------------------------
+suppmh1 <- suppmh %>%
+  mutate(
+    MHSEQ = as.numeric(IDVARVAL)
+  ) %>%
+  pivot_wider(
+    id_cols = c("USUBJID","MHSEQ"),
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+#--------------------------------------------------
+# Step 6: Merge MH and SUPPMH
+#--------------------------------------------------
+mh1 <- left_join(
+  mh,
+  suppmh1,
+  by = c("USUBJID","MHSEQ")
+) %>%
+  select(-c(STUDYID, ARM, ACTARM)) %>%
+  inner_join(adsl, by="USUBJID")
+
+#--------------------------------------------------
+# Step 7: Medical History Derivation
+#--------------------------------------------------
+mh1 <- mh1 %>%
+  mutate(
+    MHPRIOR = case_when(
+      MHENRF == "BEFORE" ~ "Past",
+      MHENRF == "ONGOING" ~ "Current"
+    )
+  )
+
+#--------------------------------------------------
+# Step 8: Create ADMH
+#--------------------------------------------------
+ADMH <- mh1 %>%
+  select(
+    USUBJID,
+    AGE,
+    SEX,
+    RACE,
+    TRT01A,
+    MHSEQ,
+    MHTERM,
+    MHDECOD,
+    MHBODSYS,
+    MHPRIOR
+  )
+
+#--------------------------------------------------
+# Step 9: Read CM Data
+#--------------------------------------------------
+cm <- read_sas(paste0(sdtm_path,"cm.sas7bdat"))
+suppcm <- read_sas(paste0(sdtm_path,"suppcm.sas7bdat"))
+
+#--------------------------------------------------
+# Step 10: Process SUPPCM
+#--------------------------------------------------
+suppcm1 <- suppcm %>%
+  mutate(
+    CMSEQ = as.numeric(IDVARVAL)
+  ) %>%
+  pivot_wider(
+    id_cols = c("USUBJID","CMSEQ"),
+    names_from = "QNAM",
+    values_from = "QVAL"
+  )
+
+#--------------------------------------------------
+# Step 11: Merge CM and SUPPCM
+#--------------------------------------------------
+cm1 <- left_join(
+  cm,
+  suppcm1,
+  by = c("USUBJID","CMSEQ")
+) %>%
+  select(-c(STUDYID, ARM, ACTARM)) %>%
+  inner_join(adsl, by="USUBJID")
+
+#--------------------------------------------------
+# Step 12: Load Admiral
+#--------------------------------------------------
+install.packages("admiral")
+library(admiral)
+
+#--------------------------------------------------
+# Step 13: Derive Start Date/Time
+#--------------------------------------------------
+cm1 <- cm1 %>%
+  derive_vars_dtm(
+    dtc = CMSTDTC,
+    new_vars_prefix = "AST",
+    highest_imputation = "M",
+    date_imputation = "first",
+    time_imputation = "first"
+  ) %>%
+  derive_vars_dtm_to_dt(exprs(ASTDTM))
+
+#--------------------------------------------------
+# Step 14: Derive End Date/Time
+#--------------------------------------------------
+cm1 <- cm1 %>%
+  derive_vars_dtm(
+    dtc = CMENDTC,
+    new_vars_prefix = "AEN",
+    highest_imputation = "M",
+    date_imputation = "last",
+    time_imputation = "last"
+  ) %>%
+  derive_vars_dtm_to_dt(exprs(AENDTM))
+
+#--------------------------------------------------
+# Step 15: Derive Study Day
+#--------------------------------------------------
+cm1 <- cm1 %>%
+  mutate(
+    ASTDY = ASTDT - TRTSDT + 1
+  )
+
+#--------------------------------------------------
+# Step 16: On-Treatment Flag
+#--------------------------------------------------
+cm1 <- cm1 %>%
+  mutate(
+    ONTRTFL = case_when(
+      AENDT >= TRTSDT ~ "Y"
+    )
+  )
