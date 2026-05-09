@@ -623,3 +623,23 @@ dm4 (Integrated subject-level dataset)
 Purpose
 
 To prepare integrated subject-level data with derived variables and analysis flags for ADSL creation.
+
+Overview
+
+Program enriches ADSL with COVID symptom flags and end-of-study disposition information using FACE and DS SDTM domains.
+
+Input Datasets
+ADSL (subject-level analysis dataset)
+FACE (COVID signs and symptoms)
+DS (Disposition dataset)
+Key Derivations
+COVID Day 14 and Day 28 flags
+End-of-study status derivation
+End-of-study date conversion
+Discontinuation reason derivation
+Merge of FACE and DS into ADSL
+Output Dataset
+adsl_final (enhanced subject-level dataset)
+Purpose
+
+To derive subject-level COVID and disposition variables for downstream analysis and reporting.
