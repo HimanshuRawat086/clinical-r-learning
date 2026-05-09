@@ -643,3 +643,25 @@ adsl_final (enhanced subject-level dataset)
 Purpose
 
 To derive subject-level COVID and disposition variables for downstream analysis and reporting.
+
+Overview
+
+Program creates ADaM-style Medical History and Concomitant Medication datasets by integrating SDTM domains with supplemental qualifiers and deriving treatment-related variables.
+
+Input Datasets
+ADSL
+MH / SUPPMH
+CM / SUPPCM
+Key Derivations
+Transpose supplemental qualifiers
+Merge supplemental qualifiers with parent domains
+Derive MHPRIOR variable
+Derive medication start/end datetime variables using admiral
+Derive study day and on-treatment flag
+Create ADMH subject-level medical history dataset
+Output Dataset
+ADMH (Medical History dataset)
+cm1 (Enhanced Concomitant Medication dataset)
+Purpose
+
+To prepare standardized ADaM-ready Medical History and Concomitant Medication datasets for analysis and reporting.
