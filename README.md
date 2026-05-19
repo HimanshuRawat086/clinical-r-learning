@@ -687,3 +687,23 @@ ADAE (Analysis Adverse Events Dataset)
 Purpose
 
 To prepare a standardized ADaM ADAE dataset for safety analysis and reporting.
+
+Overview
+
+Program derives SDTM DM domain variables from raw demographic data and standardizes identifiers and controlled terminology.
+
+Input Datasets
+Raw DM dataset
+Supporting raw datasets (IC, DS, EX, Randomization, Subject Tracking)
+Key Derivations
+Creation of STUDYID and DOMAIN
+Derivation of SITEID, SUBJID, USUBJID
+Conversion of birth date to character format
+Standardization of race terminology
+Standardization of ethnicity terminology
+Country assignment
+Output Dataset
+dm1 (SDTM DM domain dataset)
+Purpose
+
+To create a standardized SDTM DM dataset from raw clinical data sources.
