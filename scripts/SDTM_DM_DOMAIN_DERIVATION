@@ -1,0 +1,82 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(r2rtf)
+library(tidyr)
+library(stringr)
+
+#--------------------------------------------------
+# Step 3: Define Paths
+#--------------------------------------------------
+raw_path <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+
+#--------------------------------------------------
+# Step 4: Read Raw Data
+#--------------------------------------------------
+dm <- read_sas(paste0(raw_path, "dm.sas7bdat"))
+
+ic <- read_sas(paste0(raw_path, "ic.sas7bdat"))
+
+ds <- read_sas(paste0(raw_path, "ds.sas7bdat"))
+
+ex <- read_sas(paste0(raw_path, "ex.sas7bdat"))
+
+rnd <- read_sas(paste0(raw_path, "dummy_rnd.sas7bdat"))
+
+scf <- read_sas(paste0(raw_path, "dat_sub.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Derive SDTM DM
+#--------------------------------------------------
+dm1 <- dm %>%
+  mutate(
+    STUDYID = "TQ-2020-06",
+    
+    DOMAIN = "DM",
+    
+    SITEID = SITENUM,
+    
+    SUBJID = str_sub(SUBNUM, start = 4),
+    
+    USUBJID = paste0(STUDYID, "-", SITEID, SUBJID),
+    
+    BRTHDTC = as.character(BRTHDAT),
+    
+    AGEU = case_when(!is.na(AGE) ~ "YEARS"),
+    
+    RACE = case_when(
+      RACE == "BLACK" ~ "BLACK OR AFRICAN AMERICAN",
+      TRUE ~ RACE
+    ),
+    
+    ETHNIC = case_when(
+      ETHNIC == "NHISP" ~ "NOT HISPANIC OR LATINO",
+      ETHNIC == "HISP" ~ "HISPANIC OR LATINO",
+      ETHNIC == "U" ~ "UNKNOWN"
+    ),
+    
+    COUNTRY = "USA"
+  ) %>%
+  
+  select(
+    STUDYID,
+    DOMAIN,
+    SITEID,
+    SUBJID,
+    USUBJID,
+    BRTHDTC,
+    AGE,
+    AGEU,
+    SEX,
+    RACE,
+    ETHNIC,
+    COUNTRY
+  )
