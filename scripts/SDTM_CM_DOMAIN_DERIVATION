@@ -1,0 +1,146 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(lubridate)
+library(tidyr)
+library(stringr)
+
+#--------------------------------------------------
+# Step 3: Set Paths
+#--------------------------------------------------
+setwd("/Users/himanshurawat/R_Training/MAR2026/Output")
+
+raw_path <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+cm <- read_sas(paste0(raw_path,"cm.sas7bdat"))
+
+cmp <- read_sas(paste0(raw_path,"cmp.sas7bdat"))
+
+dm <- read_sas(paste0(sdtm_path,"dm.sas7bdat"))
+
+se <- read_sas(paste0(sdtm_path,"se.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Process Procedure Data
+#--------------------------------------------------
+cmp1 <- cmp %>%
+  filter(CMTRT != "") %>%
+  mutate(
+    STUDYID = "AA-2020-06",
+    
+    DOMAIN = "CM",
+    
+    SITEID = SITENUM,
+    
+    SUBJID = str_sub(SUBNUM, start = 4),
+    
+    USUBJID = paste0(STUDYID,"-",SITEID,SUBJID),
+    
+    CMCAT = "PROCEDURE",
+    
+    CMSTDTC = str_replace_all(CMSTDAT, "-UNK", ""),
+    
+    CMENDTC = str_replace_all(CMENDAT, "-UNK", ""),
+    
+    CMENRF = case_when(
+      CMONGO == "X" ~ "ONGOING",
+      CMONGO != "X" ~ "BEFORE"
+    ),
+    
+    CMTRT = str_to_upper(CMTRT),
+    
+    CMDECOD = PT_TERM,
+    
+    CMINDC = str_to_upper(CMINDC)
+  )
+
+#--------------------------------------------------
+# Step 6: Combine CM Data
+#--------------------------------------------------
+cm_fin <- bind_rows(cm1, cmp1) %>%
+  arrange(USUBJID, CMSTDTC, CMENDTC, CMTRT) %>%
+  group_by(USUBJID) %>%
+  mutate(CMSEQ = row_number())
+
+#--------------------------------------------------
+# Step 7: Treatment Start Date
+#--------------------------------------------------
+dm1 <- dm %>%
+  mutate(TRTSDT = as.Date(RFSTDTC)) %>%
+  select(USUBJID, TRTSDT)
+
+#--------------------------------------------------
+# Step 8: Study Day Derivation
+#--------------------------------------------------
+cm_fin1 <- inner_join(cm_fin, dm1, by = "USUBJID") %>%
+  mutate(
+    ASTDT = ymd(CMSTDTC),
+    AENDT = ymd(CMENDTC),
+    
+    CMSTDY = ifelse(
+      !is.na(ASTDT) < !is.na(TRTSDT),
+      ASTDT - TRTSDT,
+      ASTDT - TRTSDT + 1
+    ),
+    
+    CMENDY = ifelse(
+      !is.na(AENDT) < !is.na(TRTSDT),
+      AENDT - TRTSDT,
+      AENDT - TRTSDT + 1
+    )
+  )
+
+#--------------------------------------------------
+# Step 9: Process Subject Elements
+#--------------------------------------------------
+se1 <- se %>%
+  mutate(
+    sesdate = as.Date(SESTDTC),
+    seedate = as.Date(SEENDTC)
+  ) %>%
+  pivot_wider(
+    id_cols = "USUBJID",
+    names_from = "ETCD",
+    values_from = c("sesdate","seedate")
+  )
+
+#--------------------------------------------------
+# Step 10: Epoch Assignment
+#--------------------------------------------------
+fin <- inner_join(cm_fin1, se1, by = "USUBJID") %>%
+  mutate(
+    EPOCH = case_when(
+      sesdate_SCRN <= ASTDT & ASTDT >= seedate_SCRN ~ "SCREENING",
+      
+      sesdate_TRT <= ASTDT & ASTDT >= seedate_TRT ~ "TREATMENT",
+      
+      sesdate_FU <= ASTDT & ASTDT >= seedate_FU ~ "FOLLOW-UP"
+    )
+  ) %>%
+  select(
+    STUDYID,
+    DOMAIN,
+    USUBJID,
+    CMSEQ,
+    CMTRT,
+    CMDECOD,
+    CMSTDTC,
+    CMENDTC,
+    CMSTDY,
+    CMENDY,
+    CMDOSU,
+    CMDOSFRQ,
+    EPOCH
+  )
