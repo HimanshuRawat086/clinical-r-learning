@@ -707,3 +707,26 @@ dm1 (SDTM DM domain dataset)
 Purpose
 
 To create a standardized SDTM DM dataset from raw clinical data sources.
+
+Overview
+
+Program creates an SDTM-style CM dataset by integrating medication and procedure data, deriving study days, and assigning study epochs.
+
+Input Datasets
+CM (Concomitant Medication)
+CMP (Procedure data)
+DM (Demographics)
+SE (Subject Elements)
+Key Derivations
+Standardization of identifiers
+Derivation of CMSTDTC and CMENDTC
+Ongoing/Before flag derivation
+Uppercase standardization of treatment variables
+Sequence number assignment
+Study day derivation relative to TRTSDT
+Epoch assignment using SE dates
+Output Dataset
+fin (final CM domain dataset)
+Purpose
+
+To prepare a standardized SDTM CM dataset with study-day and epoch derivations for analysis and reporting.
