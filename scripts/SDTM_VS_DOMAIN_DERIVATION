@@ -1,0 +1,242 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(tidyr)
+
+#--------------------------------------------------
+# Step 3: Define Paths
+#--------------------------------------------------
+raw_path <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+dm <- read_sas(paste0(sdtm_path, "dm.sas7bdat"))
+
+se <- read_sas(paste0(sdtm_path, "se.sas7bdat"))
+
+tv <- read_sas(paste0(sdtm_path, "tv.sas7bdat")) %>%
+  select(VISIT, VISITNUM)
+
+vs <- read_sas(paste0(raw_path, "vs.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Derive Base VS Variables
+#--------------------------------------------------
+vs1 <- vs %>%
+  
+  mutate(
+    
+    STUDYID = "AAA-2022",
+    
+    DOMAIN = "VS",
+    
+    SITEID = SITENUM,
+    
+    SUBJID = str_sub(SUBNUM,4),
+    
+    USUBJID = paste0(STUDYID,"-",SITEID,"-",SUBJID),
+    
+    VISIT = VISNAME,
+    
+    VISITNUM = VISITID,
+    
+    VSDTC = case_when(
+      
+      (!is.na(VSDAT) & !is.na(VSTIM)) ~ 
+        paste0(as.character(VSDAT),"T",as.character(VSTIM)),
+      
+      (!is.na(VSDAT) & is.na(VSTIM)) ~ 
+        paste0(as.character(VSDAT)),
+      
+      (is.na(VSDAT) & is.na(VSTIM)) ~ ""
+    )
+  )
+
+#--------------------------------------------------
+# Step 6: Systolic Blood Pressure
+#--------------------------------------------------
+sysbp <- vs1 %>%
+  
+  filter(!is.na(VSSBP)) %>%
+  
+  mutate(
+    
+    VSTESTCD = "SYSBP",
+    
+    VSTEST = "Systolic Blood Pressure",
+    
+    VSORRES = VSSBP,
+    
+    VSORRESC = as.character(VSSBP),
+    
+    VSORRESU = "mmHg",
+    
+    VSSTRESC = VSORRESC,
+    
+    VSSTRESN = VSSBP,
+    
+    VSSTRESU = "mmHg"
+  )
+
+#--------------------------------------------------
+# Step 7: Diastolic Blood Pressure
+#--------------------------------------------------
+diasbp <- vs1 %>%
+  
+  filter(!is.na(VSDBP)) %>%
+  
+  mutate(
+    
+    VSTESTCD = "DIABP",
+    
+    VSTEST = "Diastolic Blood Pressure",
+    
+    VSORRES = VSDBP,
+    
+    VSORRESC = as.character(VSDBP),
+    
+    VSORRESU = "mmHg",
+    
+    VSSTRESC = VSORRESC,
+    
+    VSSTRESN = VSDBP,
+    
+    VSSTRESU = "mmHg"
+  )
+
+#--------------------------------------------------
+# Step 8: Heart Rate
+#--------------------------------------------------
+hr <- vs1 %>%
+  
+  filter(!is.na(VSHR)) %>%
+  
+  mutate(
+    
+    VSTESTCD = "HR",
+    
+    VSTEST = "Heart Rate",
+    
+    VSORRES = VSHR,
+    
+    VSORRESC = as.character(VSHR),
+    
+    VSORRESU = "beats/min",
+    
+    VSSTRESC = VSORRESC,
+    
+    VSSTRESN = VSHR,
+    
+    VSSTRESU = "beats/min"
+  )
+
+#--------------------------------------------------
+# Step 9: Temperature
+#--------------------------------------------------
+temp <- vs1 %>%
+  
+  filter(!is.na(VSTEMP)) %>%
+  
+  mutate(
+    
+    VSTESTCD = "TEMP",
+    
+    VSTEST = "Temperature",
+    
+    VSORRES = VSTEMP,
+    
+    VSORRESC = as.character(VSTEMP),
+    
+    VSORRESU = VSTEMPU,
+    
+    VSSTRESN = case_when(
+      
+      VSTEMPU == "F" ~ (VSTEMP - 32) * 5/9,
+      
+      VSTEMPU == "C" ~ VSTEMP
+    ),
+    
+    VSSTRESU = "C"
+  )
+
+#--------------------------------------------------
+# Step 10: Combine VS Records
+#--------------------------------------------------
+vs2 <- bind_rows(
+  
+  sysbp,
+  diasbp,
+  hr,
+  temp
+)
+
+#--------------------------------------------------
+# Step 11: Derive VSSEQ
+#--------------------------------------------------
+vs3 <- vs2 %>%
+  
+  arrange(USUBJID, VSDTC, VSTESTCD) %>%
+  
+  group_by(USUBJID) %>%
+  
+  mutate(VSSEQ = row_number())
+
+#--------------------------------------------------
+# Step 12: Study Day Derivation
+#--------------------------------------------------
+dm1 <- dm %>%
+  
+  select(USUBJID, RFSTDTC)
+
+vs4 <- left_join(vs3, dm1, by = "USUBJID") %>%
+  
+  mutate(
+    
+    RFSTDT = ymd(RFSTDTC),
+    
+    VSDT = ymd(substr(VSDTC,1,10)),
+    
+    VSDY = VSDT - RFSTDT + 1
+  )
+
+#--------------------------------------------------
+# Step 13: Merge SE
+#--------------------------------------------------
+vs5 <- left_join(vs4, se, by = "USUBJID")
+
+#--------------------------------------------------
+# Step 14: Final VS Dataset
+#--------------------------------------------------
+vs_final <- vs5 %>%
+  
+  select(
+    
+    STUDYID,
+    DOMAIN,
+    USUBJID,
+    VSSEQ,
+    VSTESTCD,
+    VSTEST,
+    VSORRES,
+    VSORRESC,
+    VSORRESU,
+    VSSTRESC,
+    VSSTRESN,
+    VSSTRESU,
+    VISIT,
+    VISITNUM,
+    VSDTC,
+    VSDY
+  )
