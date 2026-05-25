@@ -796,3 +796,26 @@ ae_final (final SDTM AE dataset)
 Purpose
 
 To create a standardized SDTM AE dataset for safety analysis and regulatory reporting.
+
+Overview
+
+Program performs descriptive statistics, frequency analysis, adverse event summarization, and XPT export using clinical reporting packages in R.
+
+Input Datasets
+ADSL example dataset
+ADAE example dataset
+Key Derivations
+Descriptive statistics for AGE
+Treatment-wise AGE summary
+Frequency distribution for RACE
+AE subject/event counts using SQL
+Export ADSL dataset to XPT transport format
+Output Dataset
+des_age
+des_age1
+des_race
+ae_cnt
+adsl_xpt.xpt
+Purpose
+
+To generate clinical summary statistics, frequency outputs, safety summaries, and regulatory transport files.
