@@ -1,0 +1,161 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list=ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(tidyr)
+
+#--------------------------------------------------
+# Step 3: Define Paths
+#--------------------------------------------------
+raw_path <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+ae <- read_sas(paste0(raw_path,"ae.sas7bdat"))
+
+dm <- read_sas(paste0(sdtm_path, "dm.sas7bdat"))
+
+se <- read_sas(paste0(sdtm_path, "se.sas7bdat"))
+
+#--------------------------------------------------
+# Step 5: Derive AE Domain
+#--------------------------------------------------
+ae1 <- ae %>%
+  
+  filter(AETERM != "") %>%
+  
+  mutate(
+    
+    STUDYID = "AAA-2022",
+    
+    DOMAIN = "AE",
+    
+    SITEID = SITENUM,
+    
+    SUBJID = str_sub(SUBNUM, 4),
+    
+    USUBJID = paste0(STUDYID,"-", SITEID,"-",SUBJID),
+    
+    AETERM = str_to_upper(AETERM),
+    
+    AELLT = LLT_NAME,
+    
+    AELLTCD = LLT_CODE,
+    
+    AEDECOD = PT_TERM,
+    
+    AEPTCD = PT_CODE,
+    
+    AEHLT = HLT_TERM,
+    
+    AEHLTCD = HLT_CODE,
+    
+    AEHLGT = HLGT_TERM,
+    
+    AEHLGTCD = HLGT_CODE,
+    
+    AEBODSYS = SOC_TERM,
+    
+    AEBDSYCD = SOC_CODE,
+    
+    AESOC = "",
+    
+    AESOCCD = "",
+    
+    AESEV = AESEV,
+    
+    AESER = AESAE,
+    
+    AEACN = AEACN,
+    
+    AEACNOTH = AEACTOTH,
+    
+    AEREL = AEREL,
+    
+    AEOUT = AEOUT,
+    
+    AESCONG = AECONG,
+    
+    AESDISAB = AEDISAB,
+    
+    AESDTH = AEDTH,
+    
+    AESHOSP = AEHOSP,
+    
+    AESLIFE = AELIFE,
+    
+    AESMIE = AESMIE,
+    
+    AETOXGR = "",
+    
+    AESTDTC = AESTDAT,
+    
+    AEENDTC = AEENDAT,
+    
+    AEENRF = case_when(
+      
+      AEONG == "X" ~ "ONGOING",
+      
+      AEONG != "X" ~ "BEFORE"
+    )
+  ) %>%
+  
+  arrange(STUDYID, USUBJID, AESTDTC, AEENDTC, AETERM) %>%
+  
+  group_by(USUBJID) %>%
+  
+  mutate(AESEQ = row_number())
+
+#--------------------------------------------------
+# Step 6: Prepare DM
+#--------------------------------------------------
+dm1 <- dm %>%
+  
+  mutate(
+    
+    STUDYID = "AAA-2022",
+    
+    SITEID = str_sub(USUBJID, 12,14),
+    
+    SUBJID = str_sub(USUBJID, 15),
+    
+    USUBJID1 = paste0(STUDYID,"-", SITEID,"-",SUBJID),
+    
+    TRTSDT = as.Date(RFSTDTC)
+  ) %>%
+  
+  select(USUBJID1, TRTSDT) %>%
+  
+  rename(USUBJID = USUBJID1)
+
+#--------------------------------------------------
+# Step 7: Derive Study Days
+#--------------------------------------------------
+ae_dm <- left_join(ae1, dm1 , by = "USUBJID") %>%
+  
+  mutate(
+    
+    ASTDT = ymd(AESTDTC),
+    
+    AENDT = ymd(AEENDTC),
+    
+    AESTDY = ASTDT - TRTSDT + 1,
+    
+    AEENDY = AENDT - TRTSDT + 1
+  )
+
+#--------------------------------------------------
+# Step 8: Merge SE
+#--------------------------------------------------
+ae_final <- left_join(ae_dm, se, by = "USUBJID")
