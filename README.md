@@ -774,3 +774,25 @@ vs_final (final SDTM VS dataset)
 Purpose
 
 To create a standardized SDTM Vital Signs domain dataset for clinical analysis and reporting.
+
+Overview
+
+Program derives the SDTM AE domain from raw adverse event data by standardizing MedDRA variables, deriving study days, and integrating DM and SE domains.
+
+Input Datasets
+Raw AE dataset
+SDTM DM
+SDTM SE
+Key Derivations
+Standardization of identifiers
+Mapping MedDRA hierarchy variables
+Derivation of AE sequence number
+Derivation of start/end study days
+Ongoing/Before flag derivation
+Merge with treatment start date from DM
+Integration with SE domain
+Output Dataset
+ae_final (final SDTM AE dataset)
+Purpose
+
+To create a standardized SDTM AE dataset for safety analysis and regulatory reporting.
