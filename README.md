@@ -751,3 +751,26 @@ fin (final MH domain dataset)
 Purpose
 
 To create a standardized SDTM MH dataset with study-day and epoch derivations for clinical analysis and reporting.
+
+Overview
+
+Program derives the SDTM VS domain from raw vital signs data by standardizing measurements, creating SDTM variables, and deriving study days.
+
+Input Datasets
+Raw VS dataset
+SDTM DM
+SDTM SE
+SDTM TV
+Key Derivations
+Creation of SDTM identifiers
+Derivation of VSDTC datetime variable
+Mapping of systolic BP, diastolic BP, heart rate, and temperature
+Standardization of result units
+Temperature conversion from Fahrenheit to Celsius
+Sequence number derivation
+Study day derivation relative to RFSTDTC
+Output Dataset
+vs_final (final SDTM VS dataset)
+Purpose
+
+To create a standardized SDTM Vital Signs domain dataset for clinical analysis and reporting.
