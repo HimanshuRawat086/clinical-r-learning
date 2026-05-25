@@ -730,3 +730,24 @@ fin (final CM domain dataset)
 Purpose
 
 To prepare a standardized SDTM CM dataset with study-day and epoch derivations for analysis and reporting.
+
+Overview
+
+Program derives the SDTM MH domain from raw medical history data, calculates study day variables, and assigns study epochs using SE data.
+
+Input Datasets
+Raw MH dataset
+SDTM DM
+SDTM SE
+Key Derivations
+Standardization of identifiers
+Medical history start/end dates
+Ongoing/Before flag derivation
+Medical history sequence assignment
+Study day derivation relative to treatment start
+Epoch assignment using SE dates
+Output Dataset
+fin (final MH domain dataset)
+Purpose
+
+To create a standardized SDTM MH dataset with study-day and epoch derivations for clinical analysis and reporting.
