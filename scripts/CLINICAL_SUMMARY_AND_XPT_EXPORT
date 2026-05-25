@@ -1,0 +1,100 @@
+#--------------------------------------------------
+# Step 1: Load Libraries
+#--------------------------------------------------
+library(formatters)
+
+library(sassy)
+
+library(sqldf)
+
+library(haven)
+
+library(arsenal)
+
+#--------------------------------------------------
+# Step 2: Load Example Data
+#--------------------------------------------------
+adsl <- ex_adsl
+
+adae <- ex_adae
+
+#--------------------------------------------------
+# Step 3: Descriptive Statistics - Overall
+#--------------------------------------------------
+des_age <- proc_means(
+  
+  data = adsl,
+  
+  var = AGE,
+  
+  stats = c(
+    "n",
+    "mean",
+    "std",
+    "min",
+    "max",
+    "median",
+    "q1",
+    "q3"
+  )
+)
+
+#--------------------------------------------------
+# Step 4: Descriptive Statistics - By Treatment
+#--------------------------------------------------
+des_age1 <- proc_means(
+  
+  data = adsl,
+  
+  var = AGE,
+  
+  stats = c(
+    "n",
+    "mean",
+    "std",
+    "min",
+    "max",
+    "median",
+    "q1",
+    "q3"
+  ),
+  
+  by = "ACTARM"
+)
+
+#--------------------------------------------------
+# Step 5: Frequency Table
+#--------------------------------------------------
+des_race <- proc_freq(
+  
+  data = adsl,
+  
+  tables = "RACE"
+)
+
+#--------------------------------------------------
+# Step 6: AE Summary using SQL
+#--------------------------------------------------
+ae_cnt <- sqldf("
+  
+select AEDECOD,
+       ACTARMCD,
+
+count(distinct USUBJID) as sub_cnt,
+
+count(USUBJID) as evt_cnt
+
+from adae
+
+group by AEDECOD, ACTARMCD
+")
+
+#--------------------------------------------------
+# Step 7: Export XPT File
+#--------------------------------------------------
+write_xpt(
+  
+  adsl,
+  
+  path = '/Users/HimanshuRawat/R_training/Output/adsl_xpt.xpt'
+)
