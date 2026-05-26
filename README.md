@@ -836,3 +836,21 @@ Summary tibble containing descriptive statistics
 Purpose
 
 To standardize descriptive statistics generation for continuous analysis variables in clinical reporting.
+
+Overview
+
+Program demonstrates basic Shiny application development and usage of Admiral templates for ADaM programming automation.
+
+Input Datasets
+ex_adsl example dataset
+Key Derivations
+Static UI rendering using fluidPage
+Text and verbatim output rendering
+Static and interactive table rendering
+Generation of ADaM templates using Admiral
+Output Dataset
+Interactive Shiny applications
+ADaM template scripts (ADSL and ADAE)
+Purpose
+
+To introduce Shiny-based clinical data visualization and automate ADaM programming structure generation using Admiral.
