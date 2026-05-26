@@ -1,0 +1,103 @@
+#--------------------------------------------------
+# Step 1: Load Shiny
+#--------------------------------------------------
+library(shiny)
+
+#--------------------------------------------------
+# Step 2: Basic Shiny App
+#--------------------------------------------------
+ui <- fluidPage(
+  
+  "Welcome to shiny app"
+)
+
+server <- function(input, output, session){
+  
+}
+
+shinyApp(ui = ui, server = server)
+
+#--------------------------------------------------
+# Step 3: Text Output App
+#--------------------------------------------------
+user_interface <- fluidPage(
+  
+  titlePanel("Example 2"),
+  
+  textOutput(outputId = "text"),
+  
+  verbatimTextOutput(outputId = "verb")
+)
+
+server_fun <- function(input, output, session){
+  
+  output$text <- renderText({
+    
+    month.abb
+  })
+  
+  output$verb <- renderPrint({
+    
+    month.abb
+  })
+}
+
+shinyApp(ui = user_interface , server = server_fun)
+
+#--------------------------------------------------
+# Step 4: Table Output App
+#--------------------------------------------------
+library(formatters)
+
+adsl <- ex_adsl
+
+user_interface <- fluidPage(
+  
+  titlePanel("Example 3"),
+  
+  tableOutput(outputId = "stat"),
+  
+  dataTableOutput(outputId = "dynamic")
+)
+
+server_fun <- function(input, output, session) {
+  
+  output$stat <- renderTable({
+    
+    head(adsl)
+  })
+  
+  output$dynamic <- renderDataTable({
+    
+    adsl
+  })
+}
+
+shinyApp(ui = user_interface , server = server_fun)
+
+#--------------------------------------------------
+# Step 5: Admiral Templates
+#--------------------------------------------------
+library(admiral)
+
+list_all_templates()
+
+#--------------------------------------------------
+# Step 6: Create ADSL Template
+#--------------------------------------------------
+use_ad_template(
+  
+  adam_name = "adsl",
+  
+  save_path = "adsl.R"
+)
+
+#--------------------------------------------------
+# Step 7: Create ADAE Template
+#--------------------------------------------------
+use_ad_template(
+  
+  adam_name = "adae",
+  
+  save_path = "adae.R"
+)
