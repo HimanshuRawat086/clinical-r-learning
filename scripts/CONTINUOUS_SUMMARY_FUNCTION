@@ -1,0 +1,35 @@
+#--------------------------------------------------
+# Step 1: Load Libraries
+#--------------------------------------------------
+library(formatters)
+
+library(tibble)
+
+#--------------------------------------------------
+# Step 2: Load Example Data
+#--------------------------------------------------
+adsl <- ex_adsl
+
+#--------------------------------------------------
+# Step 3: Create Continuous Summary Function
+#--------------------------------------------------
+contd_summary <- function(x){
+  
+  stats <- tibble(
+    
+    a_n = length(x[!is.na(x)]),
+    
+    b_mean = mean(x, na.rm = TRUE),
+    
+    c_median = median(x, na.rm = TRUE),
+    
+    d_std = sd(x, na.rm = TRUE)
+  )
+  
+  return(stats)
+}
+
+#--------------------------------------------------
+# Step 4: Run Function
+#--------------------------------------------------
+contd_summary(x = adsl$AGE)
