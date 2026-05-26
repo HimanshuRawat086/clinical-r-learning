@@ -854,3 +854,21 @@ ADaM template scripts (ADSL and ADAE)
 Purpose
 
 To introduce Shiny-based clinical data visualization and automate ADaM programming structure generation using Admiral.
+
+Overview
+
+Program generates a clinical RTF report using the reporter package by adding ADSL and ADAE dataset outputs into a formatted report.
+
+Input Datasets
+Example ADSL dataset
+Example ADAE dataset
+Key Derivations
+Create RTF report object
+Add ADSL preview output
+Add ADAE preview output
+Generate final clinical report
+Output Dataset
+clinical_report.rtf
+Purpose
+
+To automate generation of formatted clinical reports in RTF format for clinical reporting workflows.
