@@ -819,3 +819,20 @@ adsl_xpt.xpt
 Purpose
 
 To generate clinical summary statistics, frequency outputs, safety summaries, and regulatory transport files.
+
+Overview
+
+Program creates a reusable function for generating continuous summary statistics for numeric clinical variables.
+
+Input Datasets
+ADSL example dataset
+Key Derivations
+Count of non-missing observations
+Mean calculation
+Median calculation
+Standard deviation calculation
+Output Dataset
+Summary tibble containing descriptive statistics
+Purpose
+
+To standardize descriptive statistics generation for continuous analysis variables in clinical reporting.
