@@ -1,0 +1,96 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(tidyr)
+
+#--------------------------------------------------
+# Step 3: Define Paths
+#--------------------------------------------------
+raw_path  <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+dm <- read_sas(
+  paste0(sdtm_path,"dm.sas7bdat")
+)
+
+se <- read_sas(
+  paste0(sdtm_path,"se.sas7bdat")
+)
+
+tv <- read_sas(
+  paste0(sdtm_path,"tv.sas7bdat")
+) %>%
+  select(
+    VISIT,
+    VISITNUM
+  )
+
+vs <- read_sas(
+  paste0(raw_path,"vs.sas7bdat")
+)
+
+#--------------------------------------------------
+# Step 5: Derive Core VS Variables
+#--------------------------------------------------
+vs1 <- vs %>%
+  mutate(
+
+    STUDYID = "AAA-2022",
+
+    DOMAIN = "VS",
+
+    SITEID = SITENUM,
+
+    SUBJID = str_sub(
+      SUBNUM,
+      4
+    ),
+
+    USUBJID = paste0(
+      STUDYID,
+      "-",
+      SITEID,
+      "-",
+      SUBJID
+    ),
+
+    VISIT = VISNAME,
+
+    VISITNUM = VISITID,
+
+    VSDTC = case_when(
+
+      (!is.na(VSDAT) &
+         !is.na(VSTIM))
+      ~
+        paste0(
+          as.character(VSDAT),
+          "T",
+          as.character(VSTIM)
+        ),
+
+      (!is.na(VSDAT) &
+         is.na(VSTIM))
+      ~
+        paste0(
+          as.character(VSDAT)
+        ),
+
+      (is.na(VSDAT) &
+         is.na(VSTIM))
+      ~
+        ""
+    )
+  )
