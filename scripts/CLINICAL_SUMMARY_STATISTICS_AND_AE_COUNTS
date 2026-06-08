@@ -1,0 +1,99 @@
+#--------------------------------------------------
+# Step 1: Load Libraries
+#--------------------------------------------------
+library(formatters)
+
+library(sassy)
+
+library(arsenal)
+
+library(sqldf)
+
+library(dplyr)
+
+#--------------------------------------------------
+# Step 2: Load Example Data
+#--------------------------------------------------
+adsl <- ex_adsl
+
+adae <- ex_adae
+
+#--------------------------------------------------
+# Step 3: Overall AGE Statistics
+#--------------------------------------------------
+des_age <- proc_means(
+  data = adsl,
+  var = AGE,
+  stats = c(
+    "n",
+    "mean",
+    "std",
+    "min",
+    "max",
+    "median",
+    "q1",
+    "q3"
+  )
+)
+
+#--------------------------------------------------
+# Step 4: AGE Statistics by Treatment
+#--------------------------------------------------
+des_age1 <- proc_means(
+  data = adsl,
+  var = AGE,
+  stats = c(
+    "n",
+    "mean",
+    "std",
+    "min",
+    "max",
+    "median",
+    "q1",
+    "q3"
+  ),
+  by = "ACTARM"
+)
+
+#--------------------------------------------------
+# Step 5: Race Frequency Table
+#--------------------------------------------------
+des_race <- proc_freq(
+  data = adsl,
+  tables = "RACE"
+)
+
+#--------------------------------------------------
+# Step 6: Dataset Comparison Utility
+#--------------------------------------------------
+comparedf()
+
+#--------------------------------------------------
+# Step 7: AE Summary Using SQL
+#--------------------------------------------------
+ae_cnt <- sqldf(
+  "
+select
+  AEDECOD,
+  ACTARMCD,
+  count(distinct USUBJID) as sub_cnt,
+  count(USUBJID) as evt_cnt
+from adae
+group by
+  AEDECOD,
+  ACTARMCD
+"
+)
+
+#--------------------------------------------------
+# Step 8: AE Summary Using dplyr
+#--------------------------------------------------
+ae_cnt1 <- adae %>%
+  group_by(
+    AEDECOD,
+    ACTARMCD
+  ) %>%
+  summarise(
+    sub_cnt =
+      n_distinct(USUBJID)
+  )
