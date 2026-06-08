@@ -896,3 +896,24 @@ vs1
 Purpose
 
 To establish the core SDTM VS structure prior to vital sign parameter derivations.
+
+Overview
+
+Program derives the core SDTM AE domain variables from raw adverse event data and prepares study-day derivations for downstream processing.
+
+Input Datasets
+Raw AE
+SDTM DM
+SDTM SE
+Key Derivations
+Subject identifiers
+MedDRA hierarchy variables
+Start and end date variables
+Ongoing flag derivation
+AE sequence assignment
+Study day preparation variables
+Output Dataset
+ae1
+Purpose
+
+To create the foundational SDTM AE dataset before treatment-day and epoch derivations.
