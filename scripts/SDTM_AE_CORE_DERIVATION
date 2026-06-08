@@ -1,0 +1,126 @@
+#--------------------------------------------------
+# Step 1: Environment Setup
+#--------------------------------------------------
+rm(list = ls())
+
+#--------------------------------------------------
+# Step 2: Load Libraries
+#--------------------------------------------------
+library(haven)
+library(dplyr)
+library(stringr)
+library(lubridate)
+library(tidyr)
+
+#--------------------------------------------------
+# Step 3: Define Paths
+#--------------------------------------------------
+raw_path  <- "/Users/HimanshuRawat/R_training/Project/RAW/"
+sdtm_path <- "/Users/HimanshuRawat/R_training/Project/SDTM/"
+
+#--------------------------------------------------
+# Step 4: Read Input Data
+#--------------------------------------------------
+ae <- read_sas(
+  paste0(raw_path,"ae.sas7bdat")
+)
+
+dm <- read_sas(
+  paste0(sdtm_path,"dm.sas7bdat")
+)
+
+se <- read_sas(
+  paste0(sdtm_path,"se.sas7bdat")
+)
+
+#--------------------------------------------------
+# Step 5: Derive AE Variables
+#--------------------------------------------------
+ae1 <- ae %>%
+  
+  filter(AETERM != "") %>%
+  
+  mutate(
+    
+    STUDYID = "AAA-2022",
+    
+    DOMAIN = "AE",
+    
+    SITEID = SITENUM,
+    
+    SUBJID = str_sub(
+      SUBNUM,
+      4
+    ),
+    
+    USUBJID = paste0(
+      STUDYID,
+      "-",
+      SITEID,
+      "-",
+      SUBJID
+    ),
+    
+    AETERM = str_to_upper(AETERM),
+    
+    AELLT = LLT_NAME,
+    
+    AELLTCD = LLT_CODE,
+    
+    AEDECOD = PT_TERM,
+    
+    AEPTCD = PT_CODE,
+    
+    AEHLT = HLT_TERM,
+    
+    AEHLTCD = HLT_CODE,
+    
+    AEHLGT = HLGT_TERM,
+    
+    AEHLGTCD = HLGT_CODE,
+    
+    AEBODSYS = SOC_TERM,
+    
+    AEBDSYCD = SOC_CODE,
+    
+    AESEV = AESEV,
+    
+    AESER = AESAE,
+    
+    AEACN = AEACN,
+    
+    AEOUT = AEOUT,
+    
+    AESTDTC = AESTDAT,
+    
+    AEENDTC = AEENDAT,
+    
+    AEENRF = case_when(
+      AEONG == "X" ~ "ONGOING",
+      AEONG != "X" ~ "BEFORE"
+    )
+  ) %>%
+  
+  arrange(
+    STUDYID,
+    USUBJID,
+    AESTDTC,
+    AEENDTC,
+    AETERM
+  ) %>%
+  
+  group_by(USUBJID) %>%
+  
+  mutate(
+    AESEQ = row_number(),
+    
+    ASTDT = ymd(AESTDTC),
+    
+    AENDT = ymd(AEENDTC)
+  )
+
+#--------------------------------------------------
+# Step 6: Study Day Variables
+#--------------------------------------------------
+# AESTDY and AEENDY will be derived
+# after merging TRTSDT from DM
