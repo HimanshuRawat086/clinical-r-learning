@@ -940,3 +940,20 @@ ae_cnt1
 Purpose
 
 To generate common clinical summary outputs used in demographic and safety reporting.
+
+Overview
+
+Program creates a reusable function to generate descriptive statistics for continuous variables.
+
+Input Datasets
+ex_adsl
+Key Derivations
+Non-missing count
+Mean
+Median
+Standard deviation
+Output Dataset
+stats tibble
+Purpose
+
+To standardize continuous variable summaries for clinical reporting.
