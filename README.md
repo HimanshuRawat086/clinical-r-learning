@@ -872,3 +872,27 @@ clinical_report.rtf
 Purpose
 
 To automate generation of formatted clinical reports in RTF format for clinical reporting workflows.
+
+Overview
+
+Program initializes derivation of the SDTM VS domain by creating SDTM identifiers and deriving the VSDTC variable from raw date and time components.
+
+Input Datasets
+DM
+SE
+TV
+Raw VS
+Key Derivations
+STUDYID assignment
+DOMAIN assignment
+SITEID derivation
+SUBJID derivation
+USUBJID construction
+VISIT mapping
+VISITNUM mapping
+VSDTC derivation from VSDAT and VSTIM
+Output Dataset
+vs1
+Purpose
+
+To establish the core SDTM VS structure prior to vital sign parameter derivations.
