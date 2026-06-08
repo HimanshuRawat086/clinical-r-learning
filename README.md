@@ -917,3 +917,26 @@ ae1
 Purpose
 
 To create the foundational SDTM AE dataset before treatment-day and epoch derivations.
+
+Overview
+
+Program demonstrates descriptive statistics, frequency analysis, SQL summarization, and dplyr summarization using example ADaM datasets.
+
+Input Datasets
+ex_adsl
+ex_adae
+Key Derivations
+Overall AGE statistics
+Treatment-wise AGE statistics
+Race frequency table
+AE subject and event counts using SQL
+AE subject counts using dplyr
+Output Dataset
+des_age
+des_age1
+des_race
+ae_cnt
+ae_cnt1
+Purpose
+
+To generate common clinical summary outputs used in demographic and safety reporting.
