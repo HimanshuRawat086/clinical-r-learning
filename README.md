@@ -957,3 +957,19 @@ stats tibble
 Purpose
 
 To standardize continuous variable summaries for clinical reporting.
+
+Overview
+
+Program generates a clinical listing in Microsoft Word format using the reporter package.
+
+Input Datasets
+ADSL dataset
+Key Derivations
+Create DOCX report object
+Add ADSL dataset content
+Generate Word listing
+Output Dataset
+listing1.docx
+Purpose
+
+To create a simple clinical listing in DOCX format for review and reporting.
